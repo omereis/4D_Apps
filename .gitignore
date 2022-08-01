@@ -2,6 +2,8 @@
 *.4XE
 *.cfg
 *.cgi
+*.gci
+*.gcf
 *.LST
 *.MAP
 *.ERR
