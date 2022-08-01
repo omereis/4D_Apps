@@ -1,0 +1,72 @@
+#platform "Gen4-uLCD-70DT"
+
+/*************************************************
+* Filename: bigarray.4dg
+* Created: 2008/09/14
+* Author:
+* Description: memory allocation test
+**************************************************/
+
+
+var m[4];
+
+func main()
+
+    var n, p;
+
+    print ( mem_Heap(), " Bytes Free\n");
+
+    // try mem_Alloc and mem_AllocZ to see the difference
+    m[0] := mem_AllocV(2000);      // 1000 words
+    m[1] := mem_AllocV(2000);      // 1000 words
+    m[2] := mem_AllocV(2000);      // 1000 words
+    m[3] := mem_AllocV(2000);      // 1000 words
+
+    print (mem_Heap(), " Bytes Free\n");
+
+
+// method #1 (progsize = 284 bytes)
+
+    n := 0;
+    while (n<10)
+        print ( "    ", [HEX] *( m[0]+n), "\n" );  // print first 10 words in byte allocation showing the trace info
+        n++;
+    wend
+
+
+// method #2 (progsize = 283 bytes)
+
+    p := str_Ptr(m[0]);
+    n := 0;
+    while (n<10)
+        str_Printf( &p, "%04X\n");  // print first 10 words in byte allocation showing the trace info
+        n++;
+    wend
+
+    mem_Free( m[3] );       // now release the memory
+    mem_Free( m[2] );
+    mem_Free( m[1] );
+    mem_Free( m[0] );
+
+    print (mem_Heap(), " Bytes Free\n");
+
+       // try mem_Alloc and mem_AllocZ to see the difference
+    m[0] := mem_AllocV(3000);      // 1000 words
+    m[1] := mem_AllocV(3000);      // 1000 words
+    m[2] := mem_AllocV(3000);      // 1000 words
+    m[3] := mem_AllocV(3000);      // 1000 words
+
+    print (mem_Heap(), " Bytes Free\n");
+    mem_Free(ALL);   // using -1 or ALL releases all mem resources
+    print (mem_Heap(), " Bytes Free\n");
+
+
+
+repeat forever
+
+endfunc
+
+
+
+
+

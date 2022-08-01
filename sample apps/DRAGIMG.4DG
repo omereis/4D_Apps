@@ -1,0 +1,164 @@
+#platform "uLCD-32PTU"
+
+/*  --- 4DGL File Demo ---
+        - File system Demo
+    - understand the image control -
+    -- requires GFX2DEMO.DAT and GFX2DEMO.GCI
+    -- is installed on FAT16 formatted drive
+      -- PICASO Platform ---
+*/
+
+
+
+#inherit "4DGL_16bitColours.fnc"
+
+    var p;                          // buffer pointer
+
+    var i,m,j,n,k,h;
+
+    var x, y, state;        // for touch
+
+    var corx,cory,x1,y1;
+
+//#constant ALL 0xFFFF        // image control constant
+
+// need an exit
+func redrawExitButton()
+    txt_Set(FONT_SIZE, FONT3);
+    txt_Set(TEXT_OPACITY, TRANSPARENT);
+    gfx_Rectangle(190,0,239,16, GRAY);
+    txt_Set(TEXT_COLOUR, YELLOW);
+    gfx_MoveTo(198,2);
+    to(GFX); print("EXIT");
+endfunc
+
+
+
+func main()
+
+    gfx_Cls();
+    txt_Set(FONT_SIZE, FONT2);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    print("heap=", mem_Heap(), " bytes\n");         // show the heap size
+
+
+    if (!file_Mount())
+        print("Cant mount drive...\n");
+        while(!file_Mount());
+    endif
+    print("Drive mounted\n");
+
+    print ("WAIT...building image list\n");
+    j := file_LoadImageControl("GFX2DEMO.dat", "GFX2DEMO.gci", 1);  // build the image control, returning a pointer to the structure allocation
+    if (j)
+        print("image control=",[HEX] j,"\n");  // show the address of the image control allocation
+    else
+        putstr("Failed to build image control....\n");
+
+        repeat forever  // just hang if we didnt get the image list
+
+    endif
+
+
+    n := 0;
+    while(n < j[IMG_COUNT] )
+        //img_SetPosition( j, n, n*6, n*10);  // spread out the other images
+        img_SetPosition( j, n, (ABS(RAND() % 240)), (ABS(RAND() % 320)));  // spread out the images
+        n++;
+    wend
+
+    img_Show(j, ALL);        // update the entire control in 1 hit
+
+    redrawExitButton();
+
+    touch_Set(TOUCH_ENABLE);                                        // lets enable the touch screen
+    //while(touch_Get(TOUCH_STATUS) !=  TOUCH_PRESS);                 // we'll wait for a touch
+    //gfx_MoveTo(touch_Get( TOUCH_GETX), touch_Get( TOUCH_GETY));     // and we'll need a place on the screen to start with
+
+    //gfx_Set(OBJECT_COLOUR, WHITE);                        // this will be our line colour
+
+    while(1)
+        state := touch_Get(TOUCH_STATUS);               // we'll look for any touch activity
+        x := touch_Get(TOUCH_GETX);                     // we'll also grab the x
+        y := touch_Get(TOUCH_GETY);                     // and the y coordinates of the touch
+
+        if(state == TOUCH_PRESSED)                        // if there's a press
+
+
+            // see if required to EXIT a function
+            if ( touch_Get(TOUCH_GETX) > 190 && touch_Get(TOUCH_GETY) < 20 )       // EXEC "button"
+
+                while(state != TOUCH_RELEASED)
+                    state := touch_Get(TOUCH_STATUS);  // wait for button release
+                wend
+                break;
+            endif
+
+
+
+            n := img_Touched(j, ALL);                   // see if any images were touched
+            if (n != -1)
+                corx := x-img_GetWord(j, n, IMAGE_XPOS);          //save correction for drag pickup point
+                cory := y-img_GetWord(j, n, IMAGE_YPOS);
+                img_Lighten(j, n),
+                img_Show(j, n);
+            endif
+
+        endif
+
+        if(state ==  TOUCH_RELEASED)         // if there's a release;
+            if (n != -1)
+                gfx_Cls();
+                img_Show(j, ALL);           // update the entire control in 1 hit
+//img_Show(j, n);         // show image at new position
+            endif
+            n := -1;
+
+            redrawExitButton();
+
+       endif
+
+        if(state == TOUCH_MOVING)            // if there's movement
+             if(n != -1)
+                x1 := x-corx;
+                y1 := y-cory;
+                if (x1 < 0) x1 := 0;
+                if (y1 < 0) y1 := 0;
+                img_SetPosition( j, n, x1, y1);         // drag the image
+
+                // TBD maybe it would be better to drag a rectangle like old win 3.1
+                img_Lighten(j, n),
+                img_Show(j, n);
+           endif
+        endif
+    wend                                    // and we'll hang around doing it all day long
+
+    mem_Free(j);    // release image control
+    file_Unmount();
+
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,83 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: stringarg.4dg
+* Created: 2009/01/29
+* Author: 4D
+* Description: Tests string arguments passed in
+* various ways
+**************************************************/
+
+//==================================================================================
+// If all ok, you should hear the 4 (same) samples and get the final "DONE" message
+//==================================================================================
+
+    var string[20];
+    var song;
+
+func main()
+
+    var fname;
+    fname := "ding.wav";        // fname points to string constant
+
+    gfx_Cls();
+    snd_Volume(127);            // set to max volume for max resolution.
+    snd_BufSize(0);
+    txt_Set(FONT_SIZE, FONT2);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+    print("heap=", mem_Heap(), " bytes\n\n");           // show the heap size
+
+
+    //===================================================
+    // mount the drive
+    if (!file_Mount())
+        print("Cant mount drive...\n");
+        while(!file_Mount());
+    endif
+    print("Drive mounted\n");
+    //===================================================
+
+    //===================================================
+    // direct string constant method
+    print("Playing \"ding.wav\" (const)\n");
+    file_PlayWAV("ding.wav");                     // play the file
+    //===================================================
+
+    pause(1000);
+
+    //===================================================
+    // filename is from string pointer to constant string
+    print("Playing \"", [STR] fname, "\" (ptr)\n");
+    file_PlayWAV(fname);                  // play the file
+     //===================================================
+
+    pause(1000);
+
+    //===================================================
+    // filename from packed string in word array
+    to(string); print("ding.wav");
+    print("Playing \"", [STR] string, "\" (packed)\n");
+    file_PlayWAV(str_Ptr(string));                  // play the file
+    //===================================================
+
+    pause(1000);
+
+    //===================================================
+    // filename form string in allocated bytes
+    song := mem_Alloc(20);          // allocate a buffer
+    mem_Copy(string, song, 14);     // copy the string we already have
+    print("Playing \"", [STR] song, "\" (aloocated)\n");
+    file_PlayWAV(str_Ptr(song));    // play the file
+    //===================================================
+
+        print("\nDONE...");
+    mem_Free(song);   // done
+
+repeat forever
+
+endfunc
+
+//=======================================================
+
+
+

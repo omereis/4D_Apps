@@ -1,0 +1,158 @@
+#platform "uLCD-32PTU"
+
+
+
+
+#constant MYSTRING "hello world"
+
+
+#constant mysubstitute 'GO'     // 2 character constant
+//#constant myfoo GREEN           // alias
+#constant drawmybox  $gfx_rectangle(10,10,20,20,0xFF00);    // $ denotes complete substitution
+
+#constant TEXTCOLOUR 0
+
+var server[4];      // vector table for round robin server
+
+var buffer[100];
+
+var string[20];
+var mylist[10];
+var colours[3];
+
+    ///////////////////////////////////////////////////////////////////
+    // use to test assignment as global var array[] ( in mem[] )
+
+//var messages[4];                // local message pointers
+
+    ///////////////////////////////////////////////////////////////////
+
+func foo(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("FOO EXECUTED");
+endfunc
+
+func baa(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("BAA EXECUTED");
+endfunc
+
+func func1(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("func1 EXECUTED");
+endfunc
+
+func func2(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("func2 EXECUTED");
+endfunc
+
+
+    var messages[4];                // message pointers as local
+
+func main()
+    var n,o,p;
+
+    ///////////////////////////////////////////////////////////////////
+    // use to test assignment as local var array[] ( on stack )
+    ///////////////////////////////////////////////////////////////////
+
+
+    // total 574 bytes
+    p := messages;        // p = reference address to the messages[] array
+    *p++ := "TEST1";       // reference a string in the codespace to a pointer
+    *p++ := "TEST2";       // reference a string in the codespace to a pointer
+    *p++ := "TEST3";       // reference a string in the codespace to a pointer
+    *p++ := "TEST4";       // reference a string in the codespace to a pointer
+
+/*
+// total 576 bytes
+// directly
+    messages[0] := "TEST1";
+    messages[1] := "TEST2";
+    messages[2] := "TEST3";
+    messages[3] := "TEST4";
+*/
+
+    n := foo;      // use of a function pointer
+
+    n("foo isgood, ", 15);          // you can execute foo like this
+
+    // use of a function pointer array
+    server[0] := foo;
+    server[1] := baa;
+    server[2] := func1;              //  function vectors
+    server[3] := func2;
+
+    // working
+    n:=10;
+    while(n--)
+    wend
+
+    // working
+    o:=0;
+    n:=10;
+    while(n--) o++;
+
+    //
+    n := 3;
+    repeat
+        server[n](messages[n],n*2+5);      // execute all the functions
+    until (!n--);
+
+
+
+
+    colours[0] := 0xF800;
+    colours[1] := 0x7E00;
+    colours[2] := 0x001F;
+
+
+    string[0] := mysubstitute;
+    string[1] := 'OD';
+    string[2] := ' D';
+    string[3] := 'AY';
+    string[4] := 0;
+
+    p := 3;
+    while (p--)
+        txt_MoveCursor(p,5), txt_Set( TEXTCOLOUR, colours[p]), putstr(string);     // prints "GOOD DAY"
+    wend
+
+    repeat forever
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

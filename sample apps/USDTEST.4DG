@@ -1,0 +1,44 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: uSDtest.4dg
+* Created: 2009/02/15
+* Author: 4D
+* Description: test uSD detection
+**************************************************/
+#inherit "FONT4.fnt"
+
+
+
+
+func main()
+
+    touch_Set(TOUCH_ENABLE);                               // enable the touch screen
+
+    txt_FontID(FONT2);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+repeat
+    txt_Set(TEXT_WIDTH,2);
+    txt_Set(TEXT_HEIGHT,2);
+    txt_MoveCursor(4,1);
+
+    if( media_Init() )
+        putstr("Disk IN ");
+    else
+        putstr("Disk OUT");
+    endif
+
+
+    // wait forever until we get a touch
+
+    if (touch_Get(TOUCH_STATUS) == TOUCH_PRESSED) break;
+
+forever
+
+    gfx_Cls();
+
+    while (touch_Get(TOUCH_STATUS) != TOUCH_RELEASED)
+    wend
+
+endfunc

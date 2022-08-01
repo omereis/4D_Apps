@@ -1,0 +1,135 @@
+#platform "uLCD-32PTU"
+
+/*    --- 4DGL File Demo ---
+       - File system Demo -
+      - image control demo -
+      - for FAT16runprog -
+      -- PICASO Platform ---
+*/
+
+
+// Ensure that test1.dat and test1.gci are install on th FAT16 formatted uSD card
+
+
+#inherit "4DGL_16bitColours.fnc"
+
+#constant OK   1
+#constant FAIL 0
+
+    var p;                          // buffer pointer
+
+    var img;                        // handle for the image list
+
+    var n, exit, r;
+
+//---------------------------------------------------------------------------------------
+// return true if screen touched, also sets ok flag
+func CheckTouchExit()
+    return (exit := (touch_Get(TOUCH_STATUS) == TOUCH_PRESSED));   // if there's a press, exit
+endfunc
+//---------------------------------------------------------------------------------------
+
+
+
+func main()
+
+    gfx_Cls();
+    txt_Set(FONT_SIZE, FONT2);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    touch_Set(TOUCH_ENABLE);                               // enable the touch screen
+
+    print("heap=", mem_Heap(), " bytes\n");         // show the heap size
+
+    r := OK; // return value
+    exit := 0;
+
+    if (!file_Mount())
+        print("File error ", file_Error());
+        while(!CheckTouchExit());  // just hang if we didnt get the image list
+        r := FAIL;
+        goto quit;
+    endif
+
+    print ("WAIT...building image list\n");
+
+    // fast build, slow execution, lower memory requirement
+    //img := file_LoadImageControl("test1.dat", "test1.gci", 0);  // build the image control, returning a pointer to the structure allocation
+
+    // slow build, fast execution, higher memory requirement
+    img := file_LoadImageControl("GFX2DEMO.dat", "GFX2DEMO.gci", 1);  // build the image control, returning a pointer to the structure allocation
+
+
+    if (img)
+        print("image control=",[HEX] img,"\n");  // show the address of the image control allocation
+    else
+        putstr("Failed to build image control....\n");
+        while(CheckTouchExit() == 0);  // just hang if we didnt get the image list
+        r := FAIL;
+        goto quit;
+    endif
+
+
+    print ("Loaded ", img[IMG_COUNT], " images\n");
+    print ("\nTouch and hold to exit...\n");
+    pause(2000);
+
+
+    pause(3000);
+    gfx_Cls();
+
+
+
+    repeat
+
+
+        n := 0;
+
+        while(n < img[IMG_COUNT] && !exit)          // go through all the images
+
+            CheckTouchExit();                       // if there's a press, exit
+
+            img_SetPosition( img, n, (ABS(RAND() % 240)), (ABS(RAND() % 320)));  // spread out the images
+
+            n++;
+
+        wend
+
+        img_Show(img, ALL);        // update the entire control in 1 hit
+
+    until(exit);
+
+quit:
+
+    mem_Free(img);      // release the image control
+
+    file_Unmount();     // (program must release all resources)
+
+    return r;
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

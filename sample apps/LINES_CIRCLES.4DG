@@ -1,0 +1,59 @@
+#platform "uLCD-32PTU"
+
+/*  4DGL Demo Application
+    - Lines and Circles -
+    - Touch Screen Demo -
+    -- PICASO Platform --
+*/
+
+#inherit "4DGL_16bitColours.fnc"
+
+
+func help()
+    var x, y, state;
+
+    print("TOUCHE ME");
+
+    touch_Set(TOUCH_ENABLE);                                // lets enable the touch screen
+    while(touch_Get(TOUCH_STATUS) !=  TOUCH_PRESSED);         // we'll wait for a touch
+    gfx_MoveTo(touch_Get( TOUCH_GETX), touch_Get( TOUCH_GETY));     // and we'll need a place on the screen to start with
+
+    gfx_Set(OBJECT_COLOUR, WHITE);                        // this will be our line colour
+
+    while(1)
+        state := touch_Get(TOUCH_STATUS);               // we'll look for any touch activity
+        x := touch_Get(TOUCH_GETX);                     // we'll also grab the x
+        y := touch_Get(TOUCH_GETY);                     // and the y coordinates of the touch
+        if(state == TOUCH_PRESSED)                        // if there's a press
+            gfx_LineTo(x, y);                           // we'll draw a line from our previous spot
+        endif
+        if(state ==  TOUCH_RELEASED)                    // if there's a release;
+            gfx_CircleFilled(x, y, 10, RED);            // we'll draw a solid red circle of radius=10
+        endif
+        if(state == TOUCH_MOVING)                       // if there's movement
+            gfx_PutPixel(x, y, LIGHTGREEN);             // we'll draw a green pixel
+            //gfx_LineTo(x, y);                           // NB lines are best for 'drawing'
+       endif
+    wend                                    // and we'll hang around doing it all day long
+    //forever
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

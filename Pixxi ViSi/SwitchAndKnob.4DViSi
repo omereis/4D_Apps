@@ -1,0 +1,86 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-70DT-L
+PlatRes     480x800
+Depends
+end
+Options
+    Visualizer
+    Speed                        0
+    Checksum                     No
+    ResponseSize                 0
+    Multidrop                    No
+    Destination                  0
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+    MaxString                    75
+    ComPort                      0
+    ComTX1pinIdx                 3
+    ComRX1pinIdx                 0
+    FileSystem                   FATfs
+    FlashEraseOption             Optimal
+    SPIenable                    0
+    SPIsdo                       3
+    SPIsdi                       2
+    SPIsck                       1
+    FlashForceLT16MB             No
+end
+Form
+    Name                         form1
+    Alias                        form1
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+RotarySwitch
+    Name                         rotaryswitch1
+    Alias                        rotaryswitch1
+    ButtonColor                  RED
+    Color                        clBtnFace
+    Font.Color                   BLACK
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    8
+    Font.Style                   []
+    Height                       120
+    LabelsOffset                 10
+    Left                         4
+    Radius                       40
+    ShowLabel                    Yes
+    SwitchAngleEnd               270
+    SwitchAngleStart             90
+    SwitchColor                  clSilver
+    SwitchPositions              Off\n1\n2\n3\nMax
+    Top                          7
+    Width                        230
+    WinchColor                   clSilver
+    WinchOffset                  10
+    OnChanged                    ''
+    OnChanging                   ''
+end
+Knob
+    Name                         knob1
+    Alias                        knob1
+    Backimage                    (None)
+    BaseAngle                    45
+    Handleimage                  (None)
+    Left                         80
+    Maxvalue                     100
+    Minvalue                     0
+    Radius                       40
+    Top                          160
+    OnChanged                    ''
+    OnChanging                   ''
+end

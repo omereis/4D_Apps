@@ -1,0 +1,59 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: comcheck.4dg
+* Created: 2008/10/03
+* Author:
+* Description: Test program for serial bug
+*
+*
+* NB Program must be written to flash so
+* the Workshop debug window can be used.
+*
+**************************************************/
+
+#MODE RUNFLASH
+
+
+var combuf[100];
+
+func main()
+    var n;
+    gfx_Cls();
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    com_Init(combuf, 77, ':' );       // set up a comms buffer, requires ':' lead in character
+    repeat
+
+        txt_MoveCursor(3,1);                        // reset cursor to line 3, column 2
+        print("Buffered ", ( com_Count() ));        // show count of chars in buffer
+
+    until(com_Count() == 35);              // loop until sync char + 5 chars received
+
+    print ("\nreceived packet1\n");
+
+    n := 35;
+    while(n--)
+        putch(serin());     // print the 35 chars we received
+    wend
+
+
+    com_Init(combuf, 61, ';' );       // reset up a comms buffer, requires ';' lead in character
+    repeat
+
+        txt_MoveCursor(9,1);                        // reset cursor to line 3, column 2
+        print("Buffered ", ( com_Count() ));        // show count of chars in buffer
+
+    until(com_Count() == 22);              // loop until sync char + 5 chars received
+
+     print ( "\nreceived packet2");
+
+    n := 22;
+    while(n--)
+        putch(serin());     // print the 22 chars we received
+    wend
+
+    repeat forever
+endfunc
+
+

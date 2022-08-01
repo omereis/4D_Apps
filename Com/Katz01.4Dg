@@ -1,0 +1,39 @@
+#platform "Gen4-uLCD-70DT"
+
+
+// Program Skeleton 1.5 generated 31/07/2022 10:19:28
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+// var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
+
+#inherit "Katz01Const.inc"
+
+func main()
+    var hndl;
+    putstr("Mounting...From RAM\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(500);
+            gfx_Cls();
+            pause(100);
+        wend
+    endif
+    putstr("Mounted\n");
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+
+    gfx_TransparentColour(0x0020);
+    gfx_Transparency(ON);
+
+    hndl := file_LoadImageControl("Katz01.dat", "Katz01.gci", 1);
+    img_Show(hndl, Triangle1);
+
+
+
+    repeat
+    forever
+endfunc
+

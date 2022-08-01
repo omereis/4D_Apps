@@ -1,0 +1,49 @@
+#platform "Gen4-uLCD-70DT"
+
+
+#inherit "4DGL_16bitColours.fnc"
+
+var buffer[100]; // 200 character buffer for a source string
+var p; // string pointer
+var n;
+var strings[4]; // for our test strings
+#constant Total := 2000 / 4
+#NOTICE   "TOTAL = ", Total
+
+func main()
+
+    gfx_ScreenMode(LANDSCAPE) ; // change manually if orientation change
+
+    print("\nHello World\n\n") ;      // replace with your code
+
+     txt_Set ( FONT_ID, FONT3 );
+    strings[0] := "USEFUL" ;
+    strings[1] := "string" ;
+    strings[2] := "way" ;
+    strings[3] := "class" ;
+    to(buffer); print ( "and by the way, the String Class is rather
+    USEFUL " );
+ // raise a string pointer so we can use the string functions
+    p := str_Ptr(buffer);
+ // offset into the buffer a little so we don't see word "way"
+    p := p + 13;
+// show the start point of our search
+    print( "p=" , p , "\n\n" );
+#NOTICE   "p=" , p
+    n := 0;
+    while ( n < 4 )
+    print( "\"" , [STR] strings[n] , "\" is at pos " , str_FindI(
+    &p , strings[n++] ) , "\n" );
+
+// #NOTICE [STR] strings[n] , " is at pos " , &p
+    wend
+     print ( "\nNOTE: p is unchanged, p=" , p );
+#NOTICE  "NOTE: p is unchanged, p=" , p
+ //note that p is unchanged
+
+
+    repeat                      // maybe replace
+    forever                     // this as well
+
+endfunc
+

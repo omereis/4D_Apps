@@ -1,0 +1,256 @@
+#platform "Gen4-uLCD-70DT"
+
+/*            4DGL Demo Application
+              -- PICASO Platform --
+        - This prog is saved as CLOCK.4XE -
+        - NB this version has 'touch' exit -
+     - for use with the FAT16runprog example -
+  - and its 4XE executable should be saved to file -
+*/
+
+// Picaso Legacy Notes:
+// Because to(GFX) has been eliminated, the current origin
+// is shared for text and graphics. This means that any text that
+// is printed will upset the current graphics origin which must be
+// re-set when required. The old clock demo is a good example
+// of this problem, see the fix below in line 44.
+// Also, legacy Picaso had a broken gfx_LineRel which was acting
+// like gfx_lineTo, the correction for that is on line 49
+
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "FONT4.fnt"
+
+#STACK 100
+
+
+#constant FACECOLOUR DARKGREEN
+#constant SECONDSCOLOUR RED
+#constant MINUTESCOLOUR LIME
+#constant HOURSCOLOUR YELLOW
+
+
+    // global variables
+    var seconds, minutes, hours, msecs;
+    var targetX, targetY;
+    var screenwidth, screenheight;
+    var xc, yc, r;
+
+
+
+// draw the line for a clock hand
+func DrawHand(var length, var angle, var colour)
+
+    gfx_MoveTo(xc, yc);  // MUST RE_ESTABLISH THE CENTRE POINT!!!
+
+    gfx_Set(OBJECT_COLOUR, colour);
+    gfx_Orbit(angle-90, length);
+        //gfx_LineRel(targetX, targetY);  // WRONG! Picaso legacy had a broken gfx_LineRel which worked ok here,
+    gfx_LineTo(targetX, targetY);     // but it should be gfx_LineTo, this is now correct
+endfunc
+
+
+
+func main()
+    var n, state, x, y, k, colr, t, exit;
+
+    // set time to whatever
+    minutes := 29;
+    seconds := 0;
+    hours   :=9;
+    exit    := 0;
+
+ //   sys_SetTime(hours, minutes, seconds);
+
+ //   pause(100);
+
+    sys_GetTimeVar(&hours, &minutes, &seconds, &msecs); // Get the current Time into variables
+
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+         txt_Set(FONT_SIZE, FONT2);
+      txt_MoveCursor(4, 8);
+        print (mem_Heap(), " bytes free" );
+
+
+
+    // draw logo
+    txt_Set(FONT_SIZE, FONT4);
+    txt_MoveCursor(18,3);
+    txt_Set(TEXT_COLOUR, WHITE);
+    print("4D Systems ");
+    txt_Set(TEXT_COLOUR, RED);
+    print("4");
+    txt_Set(TEXT_COLOUR, CYAN);
+    print("D");
+    txt_Set(TEXT_COLOUR, YELLOW);
+    print("G");
+    txt_Set(TEXT_COLOUR, LIME);
+    print("L");
+
+    // get the screen resolution and centrepoint
+    screenwidth := gfx_Get( X_MAX );
+    screenheight := gfx_Get( Y_MAX );
+    xc := screenwidth >> 1;
+    yc := screenheight >> 1;
+
+    // calculate a radius suitable for landscape or portrate mode
+    r := MIN(screenwidth, screenheight) >> 1;
+
+    // draw the clock face
+    gfx_Set(PEN_SIZE, SOLID);
+    gfx_Circle( xc, yc, r-16, FACECOLOUR );
+
+    // draw the clocks outer dress ring
+    gfx_Set(PEN_SIZE, OUTLINE);
+    n := -8;
+    while (n++ < 8)
+        colr := ABS(n)+12^31;
+        gfx_Circle( xc, yc, r+n-8, colr );
+    wend
+    // set up the centre point
+    gfx_MoveTo(xc, yc);
+
+    // a target variable for the orbit command
+    gfx_OrbitInit(&targetX, &targetY);
+
+    // mark the hours round the clockface
+    gfx_Set(PEN_SIZE, SOLID);
+    gfx_MoveTo(xc, yc);
+    n := -90;   // 12 o'clock position
+    while (n<270)
+        gfx_Orbit(n, r-6);
+        k := 3;
+        if (!(n % 90)) k := 5;
+        gfx_Circle(targetX, targetY, k, BLUE);
+        n := n + 30;   // each 30 degreees
+    wend
+    touch_Set(TOUCH_ENABLE);         // enable the touch screen
+
+    // each second, redraw the clock face
+    repeat
+
+        t := sys_T() + 1000;      // capture the system timer and add 1sec delay value
+
+
+        //display_Vsync();
+        //pause(10);
+
+        DrawHand(r-20, seconds*6, FACECOLOUR);            // undraw the second hand
+        gfx_Circle(targetX, targetY, 3, FACECOLOUR);
+
+        DrawHand(r-35, minutes*6+seconds/10, FACECOLOUR);            // undraw the minute hand
+        gfx_Circle(targetX, targetY, 5, FACECOLOUR);
+
+        DrawHand(r-50, hours*30+minutes>>1, FACECOLOUR);  // undraw the hour hand
+        gfx_Circle(targetX, targetY, 7, FACECOLOUR);
+
+        gfx_Circle( xc, yc, 5, FACECOLOUR );
+
+
+
+        // calculate the new time
+        // Note that this was buggy,
+        if (!(seconds :=(++seconds % 60)))
+            if (!(minutes := (++minutes % 60)))
+                hours := (++hours % 12);
+            endif
+        endif
+
+
+        //display_Vsync();
+        DrawHand(r-20, seconds*6, SECONDSCOLOUR);               // redraw the second hand
+        gfx_Circle(targetX, targetY, 3, SECONDSCOLOUR);
+
+        DrawHand(r-35, minutes*6+seconds/10, MINUTESCOLOUR);    // redraw the minute hand
+        gfx_Circle(targetX, targetY, 5, MINUTESCOLOUR);
+
+        DrawHand(r-50, hours*30+minutes>>1, HOURSCOLOUR);       // redraw the hour hand
+        gfx_Circle(targetX, targetY, 7, HOURSCOLOUR);
+
+        gfx_Circle( xc, yc, 5, ORANGE );
+
+        txt_Set(TEXT_COLOUR, LIGHTGREY);
+        txt_Set(FONT_SIZE, FONT3);
+        txt_MoveCursor(1, 5);
+        print ("The Time is ", [DEC2Z] hours, ":", [DEC2Z] minutes, ":", [DEC2Z] seconds);
+
+        while(sys_T() != t)                                     // wait 1 second before we redraw
+            if (touch_Get(TOUCH_STATUS) == TOUCH_PRESSED)
+                exit := 1;
+                break;                                          // if there's a press exit
+            endif
+        wend
+
+    until(exit == 1);
+
+    gfx_Cls();
+
+    while (touch_Get(TOUCH_STATUS) != TOUCH_RELEASED)   // wait for touch release before returning
+
+    wend
+
+
+
+endfunc
+
+//==================================================================================================
+
+
+
+//==================================================================================================
+
+//==================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

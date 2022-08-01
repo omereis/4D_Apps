@@ -1,0 +1,113 @@
+#platform "Gen4-uLCD-70DT"
+
+/****************************************************************************************
+*                                                                                       *
+*  4D Visi Sample                                                                       *
+*                                                                                       *
+*  Date:        2 February 2019                                                         *
+*                                                                                       *
+*  Description: A Simple demonstration of the use of knobs and rotary switches.         *
+*               Based on original Picaso Sample, but using pixxi internal function      *
+*                                                                                       *
+*  Getting it                                                                           *
+*  running:  1. Select the Com port your display is attached to and click Comp'nLoad.   *
+*               When prompted to, copy the .GCI and .DAT files to your uSD card and     *
+*               insert the uSD card into your display before clicking OK.               *
+*                                                                                       *
+*  Notes:    1. The first two lines pasted for knobs and switches only need to be done  *
+*               once. Dependind upon your code, you may not need the initial img_Show   *
+*               at all.                                                                 *
+*            2. You should utilize the touch framework for touch processing. The        *
+*               framework is used in this example and you can copy it for your own use. *
+*            3. Both the knob and switch track under TOUCH_MOVING, you may want to have *
+*               one or both under TOUCH_RELEASED and/or TOUCH_PRESSED                   *
+*            4. moveiknob and moveiswitch are simple subroutines here, to enable the    *
+*               quick movement between touch actions. You could, of course, introduce   *
+*               parameters so that each routine could handle multiple switches. You     *
+*               could even take it as far as to use the same routine for all switches   *
+*               and knobs.                                                              *
+*                                                                                       *
+****************************************************************************************/
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+#inherit "SWITCHANDKNOBConst.inc"
+
+var x, y ;
+
+func moveiknob()
+    var degrees, posit ;
+
+    // knob1 1.0 generated 4/02/2019 2:19:31 PM
+    img_Show(hndl,iknob1) ; // show initialy, if required
+    img_ClearAttributes(hndl, iknob1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    posit := gfx_XYrotToVal(x-122, y-202, XYROT_SOUTH, 45, 315, 0, 100);
+    img_SetWord(hndl, iknob1, IMAGE_INDEX, posit);
+    img_Show(hndl, iknob1);
+    txt_MoveCursor(21,13);
+    print([DEC3ZB] posit) ;
+endfunc
+
+
+func moveiswitch()
+    var degrees, posit ;
+
+    // rotaryswitch1 1.0 generated 4/02/2019 2:27:59 PM
+    img_Show(hndl,irotaryswitch1) ; // show initialy, if required
+    img_ClearAttributes(hndl, irotaryswitch1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    posit := gfx_XYrotToVal(x-119, y-67, XYROT_SOUTH, 90, 270, 0, 4);
+    img_SetWord(hndl, irotaryswitch1, IMAGE_INDEX, posit);
+    img_Show(hndl, irotaryswitch1);
+endfunc
+
+func main()
+    var state, n, degrees, zero, posit;
+//    Uncomment the following if uSD images used.
+    putstr("Mounting...\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    gfx_TransparentColour(0x0020);
+    gfx_Transparency(ON);
+
+    hndl := file_LoadImageControl("SWITCH~1.dat", "SWITCH~1.gci", 1);
+    gfx_Cls() ;
+    img_Show(hndl,irotaryswitch1) ;
+    img_SetWord(hndl, irotaryswitch1, IMAGE_FLAGS, (img_GetWord(hndl, irotaryswitch1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE);
+    img_Show(hndl,iknob1) ;
+    img_SetWord(hndl, iknob1, IMAGE_FLAGS, (img_GetWord(hndl, iknob1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE);
+
+    touch_Set(TOUCH_ENABLE);                            // enable the touch screen
+
+    repeat
+
+        state := touch_Get(TOUCH_STATUS);               // get touchscreen status
+        n := img_Touched(hndl,-1) ;
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_PRESSED)                        // if there's a press
+            x := touch_Get(TOUCH_GETX);
+            y := touch_Get(TOUCH_GETY);
+        endif
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_RELEASED)                      // if there's a release
+        endif
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_MOVING)                       // if it's moving
+            x := touch_Get(TOUCH_GETX);
+            y := touch_Get(TOUCH_GETY);
+            if (n == irotaryswitch1) moveiswitch() ;
+            if (n == iknob1) moveiknob() ;
+        endif
+
+    forever
+endfunc

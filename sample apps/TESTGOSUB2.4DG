@@ -1,0 +1,50 @@
+#platform "uLCD-32PTU"
+
+/*         4DGL Demo Application
+           - gosub and return-
+          -- PICASO Platform --
+*/
+
+
+
+func main()
+
+
+     gosub labelA;
+     gosub labelB;
+     gosub labelC;
+     gosub labelD;
+     gosub labelE;
+     pause(10000);
+     return;
+
+labelA: putstr("testing");
+        endsub;
+
+
+labelD: putch('3');
+        endsub;
+
+
+labelC: putch('2');
+        endsub;
+
+
+labelB: putch('1');
+        endsub;
+
+
+labelE: putstr("\nfin\n");
+        endsub;
+
+
+
+
+endfunc
+
+
+
+
+
+
+

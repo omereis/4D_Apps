@@ -1,0 +1,57 @@
+#platform "uLCD-32PTU"
+
+
+
+var messages[4], msgs[4], n, p;
+
+
+func main()
+
+// using a pointer (more efficient code usage)
+
+     p := messages;        // p = reference address to the messages[] array
+    *p++ := "BUTTON1";
+    *p++ := "BUTTON2";
+    *p++ := "BUTTON3";
+    *p++ := "BUTTON4";
+
+
+
+// or directly
+
+    msgs[0] := "TEST1";
+    msgs[1] := "TEST2";
+    msgs[2] := "TEST3";
+    msgs[3] := "TEST4";
+
+// then for instance to access them,
+
+    n := 3;
+
+    repeat
+
+        putstr( msgs[n--] );  // using array index
+
+    until (n < 0);
+
+    putch('\n');
+
+    n := 0;
+
+    p := messages;
+
+    repeat
+
+        putstr( *p++ );  // using pointer
+
+    until (n++ == 3);
+
+repeat forever
+
+
+endfunc
+
+
+
+
+

@@ -1,0 +1,49 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 08 10, 15, 10:05:09 AM
+    Author     : 4d-doff
+*/
+
+.FourDGLfunction{
+    font-family: monospace, arial;
+    background-color: black;
+    //font-weight: bold;
+    color: #00ffff;
+    font-size: 1.2em;    
+}
+
+.FourDGLdel{
+    font-family: monospace, arial;
+    background-color: black;
+    //font-weight: bold;
+    color: silver;
+    font-size: 1.2em;    
+}
+
+.FourDGLnum{
+    font-family: monospace, arial;
+    background-color: black;
+    //font-weight: bold;
+    color: #cc00cc;
+    font-size: 1.2em;    
+}
+
+.FourDGLvar{
+    font-family: monospace, arial;
+    background-color: black;
+    //font-weight: bold;
+    color: white;
+    font-size: 1.2em;    
+}
+
+.FourDGLstring{
+    font-family: monospace, arial;
+    background-color: black;
+    //font-weight: bold;
+    color: yellow;
+    font-size: 1.2em;    
+}

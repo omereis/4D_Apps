@@ -1,0 +1,33 @@
+#platform "pixxiLCD-13P2CT-CLB"
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "ESP8266_4DGL_Flash.inc"
+
+// Contains the Wi-Fi network SSID and Password
+#inherit "ESP_WiFi_Network.inc"
+// Edit this file to match your Wi-Fi network
+// The changes will be used for all other examples
+
+func main()
+
+    gfx_ScreenMode(PORTRAIT);
+
+    ESP_Initialize(ESP_4DISCOVERY13);
+    WiFi_SetMode(WIFI_SOFT_AP);
+
+    gfx_MoveTo(0, 95);
+    print("Creating an Access Point...\r\n");
+    print("SSID     : ", [STR]ssid);
+    print("PASSWORD : ", [STR]password);
+    WiFi_Begin(ssid, password);
+
+    WiFi_LocalIP();
+    putstr(IPaddress);
+    print("\r\n");
+
+    repeat
+    forever
+
+endfunc
+

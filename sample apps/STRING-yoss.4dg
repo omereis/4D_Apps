@@ -1,0 +1,485 @@
+#platform "Gen4-uLCD-70DT"
+
+/*      4DGL Demo Application
+        - Old alpha testing of string code -
+        -- PICASO Platform --
+*/
+
+// vars start at mem[1]1, mem[0] is considered to be a null handle (or null pointer object)
+
+// can be a data statement
+#DATA
+    byte fred  "testing 100 0x200 0b1010101001010101 one two threee x one two three x",0      // put a test string into the buffer
+    byte packed_test  "Brown Fox", 100, 0x78, 0x56, 0x34, 0x12, "another string", 0
+    //byte packed_test  0x12, 0x34, 0x67, 0x89, "another string", 0
+    byte input_buf "my name\r 0.111,2.222e-06, 0.333, 4.444,-555.00,6.6666,0x7777",0         // a  pointer to input string via rs232 24/02/2022
+    byte test_buf "abcdefg",0
+#END
+
+var hBuf;               // a var as a handle for the text buffer
+var p, q;                  // a var as a pointer
+
+var b,w,d[2];           // temp storage for byte, word and dword
+
+var nums[3];
+
+var vars[9];
+
+var n, temp;
+
+var days[7];
+
+var buffer[10], buffer1[10], buffer2[20];
+var stat1, stat2, stat3;
+
+var inputPtr, i, parts, StatBits;                          // a  pointer to input string via rs232 24/02/2022
+
+var tmpstr0[10];                              // a  pointer to input string via rs232 24/02/2022
+var tmpstr1[10];
+var tmpstr2[10];
+var tmpstr3[10];
+var tmpstr4[10];
+var tmpstr5[10];
+var tmpstr6[10];
+
+
+func main()
+
+    txt_Set(FONT_SIZE, FONT3);
+
+    hBuf := fred;  // can be a data statement
+
+    // using a static string
+    //hBuf := "  testing 100 0x200 0b1010101001010101 one two threee x one two three x";      // put a test string into the buffer
+
+
+
+    // if we want to treat the memory as bytes (chars) we must take a pointer in the following way
+
+    days[0] := "Monday";
+    days[1] := "Tuesday";
+    days[2] := "Wednesday";
+    days[3] := "Thursday";
+    days[4] := "Friday";
+    days[5] := "Saturday";
+    days[6] := "Sunday";
+
+
+    p := str_Ptr(hBuf);        // to use the string functions, a pointer must be assigned like this
+
+
+    print("\nbyte ptr p=0x",[HEX4] p);
+
+
+    if ( str_Match(&p, "testing") )           // if we match the first string,
+
+        print("\nmatched!\n");
+
+    endif
+
+    print("\nbyte ptr p=0x",[HEX4] p, "\n");
+
+    print("\nfound ", [HEX4] str_Find(&p, "two") );
+    print("\nfound ", [HEX4] str_Find(&p, "three") );
+    print("\nfound ", [HEX4] str_Find(&p, "e x") );
+
+
+        str_GetW(&p, &w);
+        print("\n\nhBuf[0]=0x",[HEX4] w, " ",[HEX4] p);     // get the word, and show the pointer
+
+        str_GetW(&p, &w);
+        print("\n\nhBuf[1]=0x",[HEX4] w, " ",[HEX4] p);     // get the word, and show the pointer
+
+        str_GetW(&p, &w);
+        print("\n\nhBuf[2]=0x",[HEX4] w, " ",[HEX4] p);     // get the word, and show the pointer
+
+        pause(50000);
+
+//  Demontrating parsing of words from a buffer with str+getw on 22/03/2022
+
+    to(buffer1); print("0x1234 0b10011001 12345 abacus");
+    p := str_Ptr(buffer1); // raise a string pointer so we can use the
+    // string functions
+    while(str_GetW(&p, &vars[n++]) != 0); // read all the numbers till
+    // we get a non number
+    print("\nvar[0] = ", vars[0],"\nvar[1] = ", vars[1],"\nvar[2] = ", vars[2],"\n"); // print them out
+    str_Printf (&p, "%s\n" ); // numbers extracted, now just print
+
+    pause(20000);
+
+/*   28/03/2022
+//  Demontrating parsing of doubles from a buffer with str+getD on 23/03/2022
+
+    to(buffer2); print(("100000 200000 98765432 abacus"));
+    p := str_Ptr(buffer2); // raise a string pointer so we can use the
+    // string functions
+    n := 0;
+    print("\npointer p[0] is at = 0x", [HEX4] p);
+    stat1 := str_GetD(&p, &vars[0]);
+    print("\npointer p[2] is at = 0x", [HEX4] p);
+    stat2 := str_GetD(&p, &vars[2]);
+    print("\npointer p[4] is at = 0x", [HEX4] p);
+    stat3 := str_GetD(&p, &vars[4]);
+    print("\npointer p[6] is at = 0x", [HEX4] p);
+    28/03/2022 */
+/*    while(str_GetD(&p, &vars[n]) != 0)
+        n := n+2;// read all the numbers till
+    wend   */
+    // we get a non number
+    /*    28/03/2022
+    print( "\nvar[1]:var[0] = ", [HEX4] vars[1], ":" , [HEX4] vars[0], "   Status = ", stat1 );  // show the longs as hex numbers
+    print( "\nvar[3]:var[3] = ", [HEX4] vars[3], ":" , [HEX4] vars[2], "   Status = ", stat2);
+    print( "\nvar[5]:var[4] = ", [HEX4] vars[5], ":" , [HEX4] vars[4], "   Status = ", stat3 );  // print them out
+    str_Printf (&p, "%s\n" ); // numbers extracted, now just print
+
+    pause(20000);
+    28/03/2022 */
+    // remainder of string
+
+
+/*
+
+
+    if ( str_Match(&p, "testing") )           // if we match the first string,
+
+        print("\nmatched!");
+
+        //--------------------------------------------
+        // read the 3 ascii words to an array
+        temp := p;      // save the pointer
+        n := 0;         // is counter and index
+        while (n<3)
+            str_GetW( &p, &nums[n++] );
+        wend
+        p := temp;      // restore pointer
+
+
+        //--------------------------------------------
+        // print the 3 ascii words to an array
+        //if (str_GetW(&p, &w))                   // (returns true if successful)
+            //print("\nhBuf[0]=0x",[HEX4] w);     // get the next 3 values
+        //endif
+        str_GetW(&p, &w);
+        print("\nhBuf[0]=0x",[HEX4] w, " ",[HEX4] p);     // get the word, and show the pointer
+
+        str_GetW(&p, &w);
+        print("\nhBuf[1]=0x",[HEX4] w, " ",[HEX4] p);     // get the word, and show the pointer
+
+        str_GetW(&p, &w);
+        print("\nhBuf[2]=0x",[HEX4] w, " ",[HEX4] p);     // get the word, and show the pointer
+
+        if ( (n := str_Find(&p, "two")) >= 0)
+            print("found at position ", [HEX4] n);
+
+
+        else
+            print ("not found");
+        endif
+
+
+        //--------------------------------------------
+        // dump the array we made
+        n := 0;         // is counter and index
+        while (n<3)
+            print("\nnums[",n,"]=0x",[HEX4] nums[n++]);
+        wend
+
+
+    endif
+
+
+*/
+    //putstr(p>>1);       // just to note, a string pointer must be halved for word access
+    //print ("\n", [STR] hBuf);
+
+   //p := str_Ptr(hBuf);        // to use the string functions, a pointer must be assigned like this
+
+
+    p := str_Ptr(packed_test);        // to use the string functions, a pointer must be assigned like this
+
+print("\np=0x", [HEX4] p);
+
+
+    if ( str_Match(&p, "Brown Fox") )           // if we match the first string,
+
+        print("    Brown Fox matched!\n");
+
+    endif
+
+print("p=0x",[HEX4] p);
+
+//p := p + 5;
+p := p + 1;
+
+//    str_GetD(&p, &d[0]);
+//    print("\nDWORD=0x",[HEX4] d[1], ":",[HEX4] d[0]);
+
+        b := str_GetByte(p++);
+        print("\n\nBYTE=0x",[HEX2] b, "  p=0x",[HEX4] p);     // get the word, and show the pointer
+        b := str_GetByte(p++);
+        print("\n\nBYTE=0x",[HEX2] b, "  p=0x",[HEX4] p);     // get the word, and show the pointer
+        b := str_GetByte(p++);
+        print("\n\nBYTE=0x",[HEX2] b, "  p=0x",[HEX4] p);     // get the word, and show the pointer
+        b := str_GetByte(p++);
+        print("\n\nBYTE=0x",[HEX2] b, "  p=0x",[HEX4] p);     // get the word, and show the pointer
+        pause(50000);
+//        str_GetC(&p, &b);
+//        print("\nBYTE=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+
+p := p - 4;
+
+
+        b := str_GetWord(p);
+        print("\n\nWORD=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+        p := p + 2;
+        b := str_GetWord(p);
+        print("\n\nWORD=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+
+
+p := str_Ptr(buffer);             // get a pointer to the buffer
+
+        str_PutByte(p, 0x11);
+        str_PutByte(p+1, 0x22);
+        str_PutWord(p+2, 0x3344);
+        str_PutWord(p+4, 0x5566);
+
+
+p := str_Ptr(buffer);
+
+        b := str_GetWord(p);
+        print("\nbufferWORD=0x",[HEX4] b, " ",[HEX4] p,"\n");     // get the word, and show the pointer
+        p := p + 2;
+        b := str_GetWord(p);
+//        print("\nbufferWORD=0x",[HEX4] b, " ",[HEX4] p,"\n");     // get the word, and show the pointer
+        p := p + 2;
+
+        b := str_GetByte(p++);
+        print("\nbufferBYTE=0x",[HEX2] b, " ",[HEX4] p,"\n");     // get the word, and show the pointer
+        b := str_GetByte(p++);
+        print("\nbufferBYTE=0x",[HEX2] b, " ",[HEX4] p,"\n");     // get the word, and show the pointer
+
+        pause(100000);
+
+        gfx_Cls();
+        print ( "Starting of parsing\n");
+        pause(1000);
+//test
+
+
+
+
+//inputPtr := str_Ptr(input_buf);
+inputPtr := str_Ptr(input_buf);
+        print("\n",[STR]input_buf,"\n");
+        parts := 0;
+        p := str_Find( &inputPtr, "\r");
+        p := p+1;
+        print( "pointer p = 0x",[HEX4] p, "inputbuf at 0x", [HEX4] inputPtr, "\n");
+        q := str_Ptr(tmpstr0);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nFirst partial string = ", [STR]tmpstr0,  "\n");
+        parts++;
+        pause(1000);
+//       str_Printf(&tmpstr0[0],"%s\n");
+
+ //inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr1);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nSecond partial string = ", [STR]tmpstr1, "\n");
+        parts++;
+        pause(1000);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr2);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nThird partial string = ", [STR]tmpstr2, "\n");
+        parts++;
+        pause(1000);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr3);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nFourth partial string = ", [STR]tmpstr3, "\n");
+        parts++;
+        pause(1000);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr4);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nFifth partial string =", [STR]tmpstr4, "\n");
+        parts++;
+        pause(1000);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr5);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nSixth partial string = ", [STR]tmpstr5, "\n");
+        parts++;
+        pause(1000);
+
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr6);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nSixth partial string = ", [STR]tmpstr6, "\n");
+        parts++;
+        pause(1000);
+
+        p := str_Ptr(tmpstr6);
+        str_GetW(&p,&StatBits);
+        print ( "\nThe StausBits in Hex = ",[HEX4] StatBits, " Converted to int = ", StatBits, "\n");
+        print ( "\nThe number of parts is = ", parts, "\n");
+
+
+//        q := str_Ptr(tmpstr1);
+//        str_GetC(&p, &b);
+//        print("\nBYTE=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+//        str_GetC(&p, &b);
+//        print("\nBYTE=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+//        str_GetC(&p, &b);
+//        print("\nBYTE=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+//        str_GetC(&p, &b);
+//        print("\nBYTE=0x",[HEX4] b, " ",[HEX4] p);     // get the word, and show the pointer
+
+
+
+/*
+    n := str_GetWord(&p);
+    print("\npacked=0x",[HEX4] n, " ",[HEX4] p);     // get the word, and show the pointer
+
+    n := str_GetWord(&p);
+    print("\npacked=0x",[HEX4] n, " ",[HEX4] p);     // get the word, and show the pointer
+
+*/
+    print ( "\n",[STR] packed_test,"\n");
+    p := str_Ptr(packed_test);
+    if ( str_Match(&p, "another string") )           // if we match the first string,
+
+        print("\nanother string matched!\n");
+
+    endif
+
+
+ //   print("\n", [HEX4] days[2]);
+
+    //Printf(&p, "\nstring=%s word=%04x");
+   //Printf(&p, "\nword=%02x:%02x");
+   //Printf(&p, "\nword=%lx");
+   //Printf(&p, "\nword=%lu");
+
+//    print("\n", [HEX4] days[2]);
+
+    p := str_Ptr(days[2]);          // get the address of the string
+
+    str_Printf(&p,"%s\n");                // print the string
+
+    p := str_Ptr(&days[3]);          // get the address of the string
+
+   str_Printf(&p, "\nday=%*s\n");
+
+
+    b := 0x1234;            // set var to 0x1234
+
+    n := &b;                // point to it
+
+    p := str_Ptr(&n);          // get the address of the string
+
+    //fprint(&p, "\nn=%04X");
+
+    n := str_Printf(&p, "\nnumber is %*4X ");
+ //   n := str_Printf(&p, "\nnumber is %*4Xq ");
+    print(n);
+
+    p := 10;
+    b := 8;
+
+    n := ( p > b ) ? 1 : 0;
+    print( "\n p is greater then b those n = ", n,"." );
+
+repeat forever
+
+    //fprint(&p, "\nn=%4x");
+
+    //return 0x9876;
+
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

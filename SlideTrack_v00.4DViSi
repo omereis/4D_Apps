@@ -1,0 +1,174 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-70DT-L
+PlatRes     480x800
+Depends
+end
+Options
+    Visualizer
+    Speed                        0
+    Checksum                     No
+    ResponseSize                 0
+    Multidrop                    No
+    Destination                  2
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+    MaxString                    75
+    ComPort                      0
+    ComTX1pinIdx                 3
+    ComRX1pinIdx                 0
+    FileSystem                   FATfs
+    FlashEraseOption             Optimal
+    SPIenable                    0
+    SPIsdo                       3
+    SPIsdi                       2
+    SPIsck                       1
+    FlashForceLT16MB             No
+end
+Form
+    Name                         form1
+    Alias                        form1
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+GSlider
+    Name                         slider1
+    Alias                        slider1
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             BLACK
+    Bevel.InnerHighlight         clBtnHighlight
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            clBtnShadow
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             Lowered
+    Bevel.Innerwidth             2
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             Raised
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    BorderColor                  clBtnFace
+    BorderWidth                  1
+    Color                        BLACK
+    Height                       171
+    Left                         104
+    Maxvalue                     100
+    Minvalue                     0
+    Orientation                  Vertical
+    Palette.High                 clLime
+    Palette.Low                  0x005100
+    Spacing                      1
+    SolidFill                    Yes
+    TickWidth                    1
+    Top                          92
+    Width                        36
+    OnChanged                    ''
+    OnChanging                   ''
+end
+Trackbar
+    Name                         trackbar1
+    Alias                        trackbar1
+    BorderWidth                  10
+    Color                        clBtnFace
+    Frequency                    10
+    GutterBevel.BorderColor      clBtnFace
+    GutterBevel.BorderWidth      0
+    GutterBevel.InnerColor       BLACK
+    GutterBevel.InnerHighlight   clBtnHighlight
+    GutterBevel.InnerOutline     None
+    GutterBevel.InnerShadow      clBtnShadow
+    GutterBevel.InnerSpace       1
+    GutterBevel.InnerStyle       Lowered
+    GutterBevel.Innerwidth       2
+    GutterBevel.OuterColor       clBtnFace
+    GutterBevel.OuterHighlight   clBtnHighlight
+    GutterBevel.OuterOutline     Outer
+    GutterBevel.OuterShadow      clBtnShadow
+    GutterBevel.OuterSpace       0
+    GutterBevel.OuterStyle       Raised
+    GutterBevel.Outerwidth       1
+    GutterBevel.Visible          Yes
+    GutterColor                  BLACK
+    GutterWidth                  9
+    Height                       175
+    Left                         384
+    Maxvalue                     100
+    Minvalue                     0
+    Orientation                  Vertical
+    ScaleOffset                  5
+    TickColor                    BLACK
+    TickMarks                    Both
+    Top                          28
+    Width                        45
+    OnChanged                    ''
+    OnChanging                   ''
+end
+LedDigits
+    Name                         Leddigits1
+    Alias                        Leddigits1
+    Color                        0x848484
+    Decimals                     2
+    Digits                       2
+    Height                       80
+    LeadingZero                  Yes
+    Left                         156
+    OutlineColor                 BLACK
+    Palette.High                 0xF908F8
+    Palette.Low                  0x005100
+    Top                          220
+    Width                        79
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+LedDigits
+    Name                         Leddigits2
+    Alias                        Leddigits2
+    Color                        0x848484
+    Decimals                     2
+    Digits                       2
+    Height                       80
+    LeadingZero                  Yes
+    Left                         452
+    OutlineColor                 BLACK
+    Palette.High                 0xF908F8
+    Palette.Low                  0x005100
+    Top                          84
+    Width                        79
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+4Dbutton
+    Name                         4Dbutton1
+    Alias                        4Dbutton1
+    Height                       48
+    Left                         245
+    Matrix                       -1
+    Momentary                    Yes
+    Size                         48x48
+    Style                        Green
+    Top                          174
+    Type                         Button01
+    Width                        48
+    OnChanged                    ''
+end

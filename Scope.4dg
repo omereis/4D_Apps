@@ -1,0 +1,243 @@
+#platform "Gen4-uLCD-70DT"
+
+/****************************************************************************************
+*                                                                                       *
+*  Date:        15 July 2013                                                            *
+*                                                                                       *
+*  Description: A demonstration of the gfx_Scope function, demonstraing the use of      *
+*               Xstep and Yamp parameters.                                              *
+*                                                                                       *
+*               For samples using the scope as a line graph and for multiple traces     *
+*               see the Scope2 Demo.                                                    *
+*                                                                                       *
+****************************************************************************************/
+
+#inherit "4DGL_16bitColours.fnc"
+
+#constant GridColor             LIME
+
+var copybuf[360];
+var vbuf[360];
+
+
+func Trace()
+    var private Y_Gain := 50;
+    var private X_Step := 2;
+    var i, x, y;
+
+    gfx_Hline(96, 1, 318, ORANGE);
+    gfx_Scope(1, 318, 96, 360, X_Step, Y_Gain, BLACK, copybuf, vbuf, YELLOW, 0,0,0, 0,0,0, 0,0,0);
+    for(x:=32; x<320; x+=32)                // draw graticule
+        for(y:=32; y<170; y+=16)
+            gfx_PutPixel(x,y,GridColor);
+        next
+    next
+
+
+
+endfunc
+
+func Update()
+    var private first;
+    if(!first)
+        gfx_Panel(PANEL_RAISED,0,180,160,16,NAVY);
+        gfx_Panel(PANEL_RAISED,0,196,160,80,DARKGRAY);
+    endif
+
+
+
+    // X Step Panel
+    if(!first)
+        gfx_Panel(PANEL_RAISED,160,180,80,16,NAVY);
+        gfx_Panel(PANEL_RAISED,160,196,80,80,LIGHTGREY);
+        gfx_Button(1, 170,220,LIGHTGREY,BLACK,FONT1,1,1,"DN");
+        gfx_Button(1, 205,220,LIGHTGREY,BLACK,FONT1,1,1,"UP");
+        gfx_MoveTo(174,185);
+        txt_FGcolour(CYAN);
+        txt_FontID(FONT2);
+        putstr("X Step");
+    endif
+
+    txt_BGcolour(LIGHTGREY);
+    txt_FGcolour(DARKBLUE);
+    txt_FontID(FONT3);
+    gfx_MoveTo(195,203);
+    print(Trace.X_Step,"  ");
+
+
+    // Y Gain panel
+    if(!first)
+        gfx_Panel(PANEL_RAISED,240,180,80,16,NAVY);
+        gfx_Panel(PANEL_RAISED,240,196,80,80,LIGHTGREY);
+        gfx_Button(1, 250,220,LIGHTGREY,BLACK,FONT1,1,1,"DN");
+        gfx_Button(1, 285,220,LIGHTGREY,BLACK,FONT1,1,1,"UP");
+        gfx_MoveTo(254,185);
+        txt_FGcolour(CYAN);
+        txt_FontID(FONT2);
+        putstr("Y Gain");
+    endif
+
+    txt_BGcolour(LIGHTGREY);
+    txt_FGcolour(DARKBLUE);
+    txt_FontID(FONT3);
+    gfx_MoveTo(268,203);
+    print(Trace.Y_Gain,"% ");
+
+    first := 1;
+endfunc
+
+func ShowSteps()
+    var xstep, yskip;
+    xstep := 1;
+    yskip := 1;
+    if(Trace.X_Step > 0)
+        xstep := Trace.X_Step+1;
+    endif
+    if(Trace.X_Step < 0)
+        yskip := ABS(Trace.X_Step-1);
+    endif
+    txt_FGcolour(HONEYDEW);
+    txt_BGcolour(DARKGRAY);
+    gfx_MoveTo(20,208);
+    print("X increment = ",xstep,"\nSample skip = ",yskip);
+endfunc
+
+func main()
+    var D, Ihndl;
+    if (!(D:=file_Mount()))
+        while(!(D:=file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+
+    copybuf[0] := -1 ;     // indicate showing first graph (no 'undraw' of previous values)
+    //Ihndl := file_LoadImageControl("gfx2demo.dat", "gfx2demo.gci",1);
+    //img_Show(Ihndl, 27);
+    pause(1000);
+    gfx_Cls();
+
+    var function, state, x, y, i, j, k, phaseshift, modulation;
+    gfx_Set(SCREEN_MODE,LANDSCAPE);
+    gfx_Panel(PANEL_RAISED,0,0,320,16,LIGHTGREY);
+    gfx_Rectangle(0,16,319,176,GridColor);
+    gfx_Panel(PANEL_RAISED,0,177,320,63,LIGHTGREY);
+    txt_Opacity(TRANSPARENT);
+    txt_FGcolour(CYAN);
+    gfx_MoveTo(6,3);
+    putstr("gfx_Scope function demo");
+
+    gfx_Panel(PANEL_RAISED,0,177,320,63,GRAY);
+    //gfx_Panel(PANEL_RAISED,0,177,320,63,BLUE);
+
+    gfx_Panel(PANEL_RAISED,10,187,16,16,LIGHTGREY);
+    gfx_CircleFilled(17,195,3,RED);
+
+    gfx_Panel(PANEL_RAISED,40,187,16,16,LIGHTGREY);
+    gfx_CircleFilled(47,195,3,RED);
+
+
+    Update();
+    ShowSteps();
+
+    txt_Opacity(OPAQUE);
+
+
+    gfx_ClipWindow(1,17,318,175);
+
+    for(k:=0;k<320;k++) copybuf[k] := 500;       // invalidate copy buffer for first draw
+
+
+    touch_Set(TOUCH_ENABLE);                               // enable the touch screen
+
+    // now just stay in a loop
+    repeat
+
+       k := 0;
+        while (k < 360)
+            modulation := ((k%36)>18) ? 30:-30;                              // 25% modulation at freq k*10
+            //modulation := SIN(j)/3;                                 // 33% modulation at freq j
+            vbuf[k] := SIN(k+phaseshift) + modulation;
+            k++;
+            j += 33;
+        wend
+
+        phaseshift += 5;
+
+        gfx_Clipping(ON);
+        Trace();
+        gfx_Clipping(OFF);
+
+        pause(10);
+
+
+        state := touch_Get(TOUCH_STATUS);                   // get touchscreen status
+        x := touch_Get(TOUCH_GETX);
+        y := touch_Get(TOUCH_GETY);
+
+        if(state == TOUCH_MOVING)                           // if there's movement
+            gfx_MoveTo(210,4);
+            //txt_Opacity(OPAQUE);
+            txt_FGcolour(WHITE);
+            print("X:",[DEC3ZB] x," Y:", [DEC3ZB] y);
+            //txt_Opacity(TRANSPARENT);
+        endif
+
+        if(state == TOUCH_PRESSED)                          // if there's a press
+            if(y>220 && y<240)
+                if(x>170 && x < 190)
+                    // X DN
+                    function := 1;
+                    if(Trace.X_Step > -8)
+                        Trace.X_Step--;
+                        gfx_RectangleFilled(1,17,318,175,BLACK);
+                        Update();
+                        ShowSteps();
+                    endif
+
+                else if (x > 205 && x < 225)
+                    // X UP
+                    function := 2;
+                    if(Trace.X_Step < 8)
+                        Trace.X_Step++;
+                        gfx_RectangleFilled(1,17,318,175,BLACK);
+                        Update();
+                        ShowSteps();
+                     endif
+
+                else if (x > 250 && x < 275)
+                    // Y DN
+                    function := 3;
+
+                else if (x > 285 && x < 305)
+                    // Y UP
+                    function := 4;
+
+                endif
+            endif
+         endif
+
+        if(state == TOUCH_RELEASED)                         // if there's a release
+            function := 0;
+        endif
+
+        // auto repeat
+        if (function == 3)
+            if(Trace.Y_Gain > 0)
+                Trace.Y_Gain--;
+                Update();
+            endif
+        else if (function == 4)
+            if(Trace.Y_Gain < 200)
+                Trace.Y_Gain++;
+                Update();
+            endif
+        endif
+
+
+    forever
+
+
+endfunc

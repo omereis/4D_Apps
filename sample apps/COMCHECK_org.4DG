@@ -1,0 +1,82 @@
+#platform "Gen4-uLCD-70DT"
+
+/*************************************************
+* Filename: comcheck.4dg
+* Created: 2008/10/03
+* Author:
+* Description: buffered comms with qualifier
+* Default baud rate 115.2kb
+*
+*
+* NB Program must be written to flash so
+* the Workshop debug window can be used.
+*
+**************************************************/
+
+
+var combuf[50];  // buffer for up to 100 bytes
+var combuf_copy[50];  // buffer for up to 100 bytes
+
+func main()
+    var n;
+    var copy_ptr;
+    var src, dest;
+    gfx_Cls();
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    com_Init(combuf, 77, ':' );       // set up a comms buffer, requires ':' qualifiere (lead in) character
+    pause(10000);
+    to(COM0); print("Serial Input Test - Send a file:");
+    repeat
+
+       txt_MoveCursor(1,1);                        // reset cursor to line 3, column 2
+        print("Need ':' to start...");
+
+        txt_MoveCursor(3,1);                        // reset cursor to line 3, column 2
+        print("Buffered ", ( com_Count()), "\n");        // show count of chars in buffer
+
+    until(com_Count() >= 35);              // loop until sync char + 5 chars received
+
+    print("\nThe buffer at recieve buf is \n", [STR]combuf, "\n");
+
+    print ("\nreceived packet1\n\n");
+
+    n := 35;
+    while(n--)
+        putch(serin());     // print the 35 chars we received
+    wend
+
+    print("\n\nThe buffer at recieve buf is still\n", [STR]combuf, "\n");
+
+    src := str_Ptr(combuf);
+    dest := str_Ptr(combuf_copy);
+    copy_ptr := str_Length(src);
+    str_Copy(dest, src);
+
+//    copy_ptr := str_Copy(*combuf_copy, *combuf);
+    print("\nNumber of bytes recieved = ", copy_ptr, "\nsource address combuf = ", [HEX4]combuf, "\ndestination address combuf_copy = ", [HEX4]combuf_copy, "\n");
+    print("\n\nThe copy of the recieved buffer is \n", [STR]combuf_copy, "\n");
+
+       print("\nNeed 'x' to start...\n");
+
+    com_Init(combuf, 61, 'x' );       // reset up a comms buffer, requires 'x' lead in character
+    repeat
+
+        txt_MoveCursor(18,1);                        // reset cursor to line 3, column 2
+        print("x - Buffered ", ( com_Count() ));        // show count of chars in buffer
+
+    until(com_Count() >= 22);              // loop until sync char + 5 chars received
+
+    print("\nThe buffer at recieve buf is \n", [STR]combuf, "\n");
+
+    print ( "\n\nreceived packet2\n\n");
+
+    n := 22;
+    while(n--)
+        putch(serin());     // print the 22 chars we received
+    wend
+
+    repeat forever
+endfunc
+
+

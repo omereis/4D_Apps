@@ -1,0 +1,63 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: prog1.4dg
+* Created: 2008/11/17
+* Author:
+* Description: part of file_Exec(...) demo.
+*            : Called by SETCOLOR.4dg using
+*            : the file_Process(...) function.
+* This program must be saved to FAT16 as PROG1.4FN
+**************************************************/
+
+// simply to demonstrate file_Exec or file_LoadFunction.
+// called with 24bit RGB values,
+// Simply shows free memory and the 3 colour values,
+// then waits for touch then returns colour value
+// as 16bit.
+
+#STACK 40
+
+func main(var r, var g, var b)
+
+gfx_Cls();
+    txt_Set(FONT_SIZE, FONT3);
+    txt_MoveCursor(4, 8);
+    print (mem_Heap(), " bytes free\n\n" );
+
+    print("red=",r,"\ngreen=",g,"\nblue=",b,"\n\n");
+
+
+    print("\nTouch to exit....");
+    touch_Set(TOUCH_ENABLE);                                        // enable the touch screen
+
+// wait forever until we get a touch
+    repeat
+        if (touch_Get(TOUCH_STATUS) == TOUCH_PRESSED) break;          // if there's a press exit
+    forever
+
+    print("\n\nExiting....");
+
+    while (touch_Get(TOUCH_STATUS) != TOUCH_RELEASED);          // if there's a press exit
+
+    return gfx_RGBto565(r, g, b);       // return as 565 colour
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

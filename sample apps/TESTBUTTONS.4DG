@@ -1,0 +1,129 @@
+#platform "uLCD-32PTU"
+
+/*  4DGL Demo Application
+    - Buttons as Keypad -
+    -- PICASO Platform --
+*/
+
+#inherit "4DGL_16bitColours.fnc"
+
+
+var keyval;        // - 1 if no key pressed else 0-15
+
+
+#CONST
+    NO               0
+    YES              1
+#END
+
+// button states
+var vButtonState[16], vOldButtonState[16];
+
+// button area for touch calcs
+#constant BUTTONWIDTH 60
+#constant BUTTONHEIGHT 60
+
+#DATA
+    // button legends
+    byte dL '0',0,'1',0,'2',0,'3',0,'4',0,'5',0,'6',0,'7',0,'8',0,'9',0,'A',0,'B',0,'C',0,'D',0,'E',0,'F',0
+
+    // button X positions
+    byte dX 0,60,120,180,0,60,120,180,0,60,120,180,0,60,120,180
+
+    // button Y positions
+    byte dY 0,0,0,0,60,60,60,60,120,120,120,120,180,180,180,180
+#END
+
+
+//==================================================================================================
+// if any buttons have changed state, redraw them
+//==================================================================================================
+func redraw()
+    var n;
+
+
+    n:=0;
+    repeat
+        if ( vButtonState[n] != vOldButtonState[n] )
+            vOldButtonState[n] := vButtonState[n];
+            gfx_Button( vButtonState[n], dX[n], dY[n], DARKBLUE, YELLOW, 2, 4, 3, &dL[n<<1] );
+        endif
+    until (++n == 16);
+endfunc
+
+
+//==================================================================================================
+// do something with the key data
+//==================================================================================================
+func sendkey()
+    txt_Set(TEXT_OPACITY, OPAQUE);
+    txt_Set(TEXT_COLOUR, WHITE);
+    txt_Set(FONT_SIZE , FONT3);
+    txt_MoveCursor(22, 0);
+    print ("Last Key Pressed: ", [HEX1] keyval);
+endfunc
+
+//==================================================================================================
+// convert the touch co-ordinates to a key value
+//==================================================================================================
+func readKeys()
+    var x,y;
+    x := touch_Get(TOUCH_GETX);
+    y := touch_Get(TOUCH_GETY);
+    if (y < 240)
+        x := x / BUTTONWIDTH;
+        y := y / BUTTONHEIGHT;
+        keyval := y << 2 + x;
+    endif
+endfunc
+
+//==================================================================================================
+func main()
+    var n, state, x, y;
+
+    touch_Set(TOUCH_ENABLE);                            // enable the touch screen
+
+    keyval := -1;                                       // holds -1 if not pressed, else key number 0-15
+
+    // first, set all the buttons to the up state
+    n := 0;
+    repeat
+        vButtonState[n]:=UP;
+        vOldButtonState[n++]:=DOWN;
+    until(n==16);
+
+    redraw();                                           // draw keys for the first time
+
+
+    // now just stay in a loop
+    repeat
+
+        state := touch_Get(TOUCH_STATUS);               // get touchscreen status
+
+        if(state == TOUCH_PRESSED)                        // if there's a press
+            readKeys();
+            if (keyval != -1)
+                vButtonState[keyval] := DOWN;           // put button in DOWN state
+                redraw();
+            endif
+        endif
+
+        if(state == TOUCH_RELEASED)                      // if there's a release
+            if (keyval != -1)
+                vButtonState[keyval] := UP;             // restore the buttons UP state
+                redraw();
+                sendkey();                              // do something with the key data
+                keyval := -1;
+            endif
+        endif
+
+    forever
+
+endfunc
+//==================================================================================================
+
+
+
+
+
+

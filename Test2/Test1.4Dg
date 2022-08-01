@@ -1,0 +1,59 @@
+#platform "Gen4-uLCD-70DT"
+
+
+// Program Skeleton 1.5 generated 31/07/2022 15:52:59
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+// var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
+
+#inherit "Test1Const.inc"
+
+func main()
+    var hndl;
+//  Uncomment the following if uSD and uSD based GCI images, fonts or strings used.
+/**/
+//  var hstrings ; // Handle to access uSD strings, uncomment if required
+//  var hFontx ;   // Handle to access uSD fonts, uncomment if required and change n to font number
+    putstr("Mounting...");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    putstr("...mounted\n");
+    gfx_TransparentColour(0x0020);    // uncomment if transparency required, please understand why and when you need to use this
+    gfx_Transparency(ON);             // uncomment if transparency required, as generally there is a performance hit when using it
+
+//  hFontn := file_LoadImageControl("Test1.dan", "Test1.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+//  hstrings := file_Open("Test1.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+    hndl := file_LoadImageControl("Test1.dat", "Test1.gci", 1);
+    putstr(hndl);
+/**/
+
+//  Uncomment the following if Flash and Flash based GCF images, fonts or strings used.
+/*
+//    if SPI0 (Traditional uSD SPI port) Used
+//    spi_Init(SPI_FAST, SPI_IS_FLASH);  // replace SPI_IS_FLASH with 0 if PmmC < v27 and flash <= 16MB
+//    if SPI1 (other SPI pins) Used
+//    pin_HI(EnablePin) ;                   // EnablePin is PA pin connected to SPI_CS
+//    pin_Set(PIN_OUT,EnablePin) ;          // EnablePin is PA pin connected to SPI_CS
+//    SPI1_SCK_pin(FlashSCK?<) ;            // FlashSCK is PA pin connected to SPI_SCK
+//    SPI1_SDI_pin(FlashSDI?<) ;            // FlashSDI is PA pin connected to SPI_SDI
+//    SPI1_SDO_pin(FlashSDO?<) ;            // FlashSDO is PA pin connected to SPI_SDO
+//    SPI1_Init(SPI_SPEED15, SPI8_MODE_5  + SPI_IS_FLASH, EnablePin) ; // remove SPI_IS_FLASH if PmmC < v27 and flash <= 16MB, EnablePin is USD_ENABLE or PA?
+    spiflash_SetAdd(SPI0, 0, 0);
+    hndl := spiflash_LoadGCFImageControl(SPIx, EnablePin);    // SPIx is SPI0 or SPI1, as appropriate, EnablePin is USD_ENABLE or PA?
+*/
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+
+    repeat
+    forever
+endfunc
+

@@ -1,0 +1,319 @@
+#platform "Gen4-uLCD-70DT"
+
+
+// Program Skeleton 1.5 generated 14/02/2022 12:39:10
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+// var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
+
+#inherit "draw-visi-designerConst.inc"
+
+#DATA
+    // IGauge2 Data Start
+    word IIGauge2 472, 220, 259, 28, 130, 0, 6, 0, 0, 0x18E3, 0x0280, LIME,
+        0x5280, YELLOW, 0x5000, RED, 83, 58, 0x2
+    // IGauge2 Data End
+    // IGauge1 Data Start
+    word IIGauge1 472, 136, 259, 28, 130, 0, 10, 0, 0, 0x18E3, 0x0280, LIME,
+        0x5280, YELLOW, 0x5000, RED, 83, 58, 0x2
+    // IGauge1 Data End
+#END
+var vIGauge2RAM[WIDGET_RAM_SPACE] ;
+var vIGauge1RAM[WIDGET_RAM_SPACE] ;
+
+
+func UpdateUserLeds()
+
+    var state := 1;
+
+    // Userled1 1.0 generated 20/02/2022 9:54:17
+    img_Show(hndl,iUserled1) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled1, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled1) ;
+
+    // Userled2 1.0 generated 20/02/2022 9:54:17
+    img_Show(hndl,iUserled2) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled2, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled2) ;
+
+    // Userled3 1.0 generated 20/02/2022 9:54:17
+    img_Show(hndl,iUserled3) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled3, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled3) ;
+
+    // Userled4 1.0 generated 20/02/2022 9:54:17
+    img_Show(hndl,iUserled4) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled4, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled4) ;
+
+    // Userled5 1.0 generated 20/02/2022 9:54:17
+    img_Show(hndl,iUserled5) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled5, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled5) ;
+
+    // Userled6 1.0 generated 20/02/2022 9:54:17
+    img_Show(hndl,iUserled6) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled6, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled6) ;
+
+    // Userled7 1.0 generated 20/02/2022 9:54:18
+    img_Show(hndl,iUserled7) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled7, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled7) ;
+
+    // Userled8 1.0 generated 20/02/2022 9:54:18
+    img_Show(hndl,iUserled8) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled8, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled8) ;
+
+    // Userled9 1.0 generated 20/02/2022 9:54:18
+    img_Show(hndl,iUserled9) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled9, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled9) ;
+
+    // Userled10 1.0 generated 20/02/2022 9:54:18
+    img_Show(hndl,iUserled10) ;  // show initialy, if required
+    img_SetWord(hndl, iUserled10, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(hndl,iUserled10) ;
+
+endfunc
+
+
+func main()
+//  Uncomment the following if uSD and uSD based GCI images, fonts or strings used.
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+    gfx_Cls();
+    var hstrings ; // Handle to access uSD strings, uncomment if required
+    var hFont3 ;   // Handle to access uSD fonts, uncomment if required and change n to font number
+    var value, ch;
+
+
+    putstr("Mounting...\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+//    gfx_TransparentColour(0x0020);    // uncomment if transparency required, please understand why and when you need to use this
+//    gfx_Transparency(ON);             // uncomment if transparency required, as generally there is a performance hit when using it
+
+    hFont3 := file_LoadImageControl("DRAW-V~1.dan", "DRAW-V~1.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+    hstrings := file_Open("DRAW-V~1.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+    hndl := file_LoadImageControl("DRAW-V~1.dat", "DRAW-V~1.gci", 1);
+
+
+//  Uncomment the following if Flash and Flash based GCF images, fonts or strings used.
+/*
+//    if SPI0 (Traditional uSD SPI port) Used
+//    spi_Init(SPI_FAST, SPI_IS_FLASH);  // replace SPI_IS_FLASH with 0 if PmmC < v27 and flash <= 16MB
+//    if SPI1 (other SPI pins) Used
+//    pin_HI(EnablePin) ;                   // EnablePin is PA pin connected to SPI_CS
+//    pin_Set(PIN_OUT,EnablePin) ;          // EnablePin is PA pin connected to SPI_CS
+//    SPI1_SCK_pin(FlashSCK?<) ;            // FlashSCK is PA pin connected to SPI_SCK
+//    SPI1_SDI_pin(FlashSDI?<) ;            // FlashSDI is PA pin connected to SPI_SDI
+//    SPI1_SDO_pin(FlashSDO?<) ;            // FlashSDO is PA pin connected to SPI_SDO
+//    SPI1_Init(SPI_SPEED15, SPI8_MODE_5  + SPI_IS_FLASH, EnablePin) ; // remove SPI_IS_FLASH if PmmC < v27 and flash <= 16MB, EnablePin is USD_ENABLE or PA?
+    spiflash_SetAdd(SPI0, 0, 0);
+    hndl := spiflash_LoadGCFImageControl(SPIx, EnablePin);    // SPIx is SPI0 or SPI1, as appropriate, EnablePin is USD_ENABLE or PA?
+*/
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+    gfx_Cls();
+
+    // Form1 1.1 generated 20/02/2022 9:54:17
+
+    // Label1 1.0 generated 20/02/2022 9:54:17
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(11, 50) ;
+    putstr("WARNING") ;
+
+    // Label2 1.0 generated 20/02/2022 9:54:17
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(39, 115) ;
+    putstr("TDC") ;
+
+    // Label3 1.0 generated 20/02/2022 9:54:17
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(7, 179) ;
+    putstr("HW FAULT") ;
+
+    // Label4 1.0 generated 20/02/2022 9:54:17
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(47, 239) ;
+    putstr("OK") ;
+
+    // Label5 1.0 generated 20/02/2022 9:54:17
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(168, 357) ;
+    putstr("SAF TD") ;
+
+    // Label6 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(268, 356) ;
+    putstr("SAF1") ;
+
+
+    // Label7 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(356, 356) ;
+    putstr("SAF2") ;
+
+    // Label8 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(493, 357) ;
+    putstr("SAF1") ;
+
+     // Label9 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(568, 356) ;
+    putstr("SAF2") ;
+
+
+    // Label10 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(640, 357) ;
+    putstr("SAF3") ;
+
+    // Label11 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(271, 321) ;
+    putstr("dP/dt") ;
+
+    // Label12 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(520, 324) ;
+    putstr("Flux Thresholds") ;
+
+    // Label13 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(145, 50) ;
+    putstr("Current[A]:") ;
+
+    // Label14 1.0 generated 20/02/2022 9:54:18
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(145, 82) ;
+    putstr("Sample[V]:") ;
+
+    // Label15 1.0 generated 20/02/2022 9:54:19
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(145, 122) ;
+    putstr("Lin[V]:") ;
+
+    // Label16 1.0 generated 20/02/2022 9:54:19
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(145, 165) ;
+    putstr("Log[V]:") ;
+
+    // Label17 1.0 generated 20/02/2022 9:54:19
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(145, 201) ;
+    putstr("TD[sec]:") ;
+
+    // Label18 1.0 generated 20/02/2022 9:54:19
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(145, 240) ;
+    putstr("dP/dt[%]:") ;
+
+   // Label19 1.0 generated 20/02/2022 9:54:19
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(472, 120) ;
+    putstr("0V") ;
+
+    // Label20 1.0 generated 20/02/2022 9:54:19
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(712, 120) ;
+    putstr("10V") ;
+
+
+    // Label21 1.0 generated 20/02/2022 9:54:20
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(472, 204) ;
+    putstr("-3") ;
+
+    // Label22 1.0 generated 20/02/2022 9:54:20
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(716, 204) ;
+    putstr("+3") ;
+
+    // Label23 1.0 generated 20/02/2022 9:54:20
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(595, 120) ;
+    putstr("V-Lin") ;
+
+    // Statictext1 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iStatictext1) ;
+
+    // Statictext2 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iStatictext2) ;
+
+    // Statictext3 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iStatictext3) ;
+
+    // Statictext4 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iStatictext4) ;
+
+    // Statictext5 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iStatictext5) ;
+
+    // Statictext6 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iStatictext6) ;
+
+    // Image1 1.0 generated 20/02/2022 9:54:19
+    img_Show(hndl,iImage1) ;
+
+    // IGauge1 1.0 generated 20/02/2022 9:54:19
+    value := 9;
+    gfx_Gauge(value, vIGauge1RAM, IIGauge1) ;    // where value is 0 to 10
+
+    // IGauge2 1.0 generated 20/02/2022 9:54:20
+     value := 2;
+    gfx_Gauge(value, vIGauge2RAM, IIGauge2) ;    // where value is 0 to 6
+
+    UpdateUserLeds();
+
+    to(COM0); print("Serial Input Test:\n");
+
+    gfx_MoveTo(47, 280) ;
+
+    // now just stay in a loop
+    repeat
+
+        ch := serin();
+        if (ch != -1)
+            print( [CHR] ch );   // if a key was received from PC, print its ascii value
+        endif
+
+    forever
+
+endfunc
+

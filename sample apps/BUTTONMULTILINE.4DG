@@ -1,0 +1,44 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: button1.4dg
+* Created: 2009/01/29
+* Author: 4D
+* Description: Multiline Buttons Example
+**************************************************/
+
+#inherit "4DGL_16bitColours.fnc"
+
+
+func main()
+
+    var list1, sel, linecount, loop;
+
+    list1 := "Line1\nLine2\nLine3\nLine4\nLine5";        // list 1 points to string constant
+
+    sel := 1;           // preset selection to line 1
+    linecount := 5;     // max lines
+
+print("Wait for exit....");
+
+repeat
+
+    gfx_Selection(sel, RED, YELLOW);    // pre-emptive selection of hilite line
+
+    gfx_Button( 0 , 70, 100, GRAY, BLACK, 2, 1, 1, list1);   // use multiline button as list
+
+    if(sel++ == linecount) sel := 1;        // demo, scan through the selections
+
+    pause (250);
+
+until(loop++==15);
+
+    gfx_Selection(0, RED, YELLOW);    // de-select (colour = dont care)
+
+endfunc
+
+//=======================================================
+
+
+
+

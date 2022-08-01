@@ -1,0 +1,52 @@
+#platform "pixxiLCD-13P2CT-CLB"
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "ESP8266_4DGL_Flash.inc"
+
+// Contains the Wi-Fi network SSID and Password
+#inherit "ESP_WiFi_Network.inc"
+// Edit this file to match your Wi-Fi network
+// The changes will be used for all other examples
+
+func main()
+
+    gfx_ScreenMode(PORTRAIT);
+
+    media_Init();
+    ESP_Initialize(ESP_4DISCOVERY13);
+
+    WiFi_SetMode(WIFI_STATION);
+
+    gfx_MoveTo(0, 95);
+    print("Connecting to ", [STR]SSID);
+    WiFi_Begin(SSID, PASSWORD);
+    while(WiFi_Status() != WIFI_CONNECTED)
+        pause(500);
+        putch('.');
+    wend
+    putch('\n');
+    WiFi_PrintLocalIP(0);
+    putch('\n');
+
+    HTTP_SetMode(HTTP_GET);
+    HTTP_SetPort(80);
+    HTTP_SetOutputSector(0, 0);
+
+    HTTP_SetHost("www.4dsystems.com.au");
+    HTTP_SetPath("/media/downloads/4Discovery/4dsystems.txt");
+    print("Requesting 4dsystems.txt\n");
+    HTTP_StartRequest(0);
+
+    print("Done\n\nContents:\n\n");
+
+    var file, fileBuffer[100];
+    file := file_Open("output.txt", 'r');
+    file_Read(fileBuffer, 200, file);
+    print([STR]fileBuffer);
+
+    repeat
+    forever
+
+endfunc
+

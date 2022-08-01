@@ -1,0 +1,92 @@
+#platform "uLCD-32PTU"
+
+// FONT TEST
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "MS_SanSerif8x12.fnt"
+#inherit "FONT4.fnt"
+
+#MODE RUNFLASH
+
+func main()
+var n;
+repeat
+    txt_Wrap(0); //turn off text wrapping
+    //txt_BGcolour(GRAY);
+    txt_FGcolour(YELLOW);
+    //=============================================================
+    gfx_Cls();
+    //txt_Opacity(TRANSPARENT);
+    n:=0;
+    txt_FontID(FONT1);
+    print([HEX] FONT1," FONT1, 260 char test\n");
+    pokeW(SYSTEM_TIMER_LO, 0);      // reset timer
+    while(n++<13)
+        print("12345678901234567890\n");
+    wend
+    n := peekW(SYSTEM_TIMER_LO);            // capture timer
+    print(n,"Msec");
+    pause(2000);
+
+    //=============================================================
+    gfx_Cls();
+    //txt_Opacity(TRANSPARENT);
+    n:=0;
+    txt_FontID(FONT2);
+    print([HEX] FONT2," FONT2, 260 char test\n");
+    pokeW(SYSTEM_TIMER_LO, 0);      // reset timer
+    while(n++<13)
+        print("12345678901234567890\n");
+    wend
+    n := peekW(SYSTEM_TIMER_LO);            // capture timer
+    print(n,"Msec");
+    pause(2000);
+
+    //=============================================================
+    gfx_Cls();
+    //txt_Opacity(TRANSPARENT);
+    n:=0;
+    txt_FontID(FONT3);
+    print([HEX] FONT3," FONT3, 260 char test\n");
+    pokeW(SYSTEM_TIMER_LO, 0);      // reset timer
+    while(n++<13)
+        print("12345678901234567890\n");
+    wend
+    n := peekW(SYSTEM_TIMER_LO);            // capture timer
+    print(n,"Msec");
+    pause(2000);
+
+    //=============================================================
+    gfx_Cls();
+    //txt_Opacity(TRANSPARENT);
+    n:=0;
+    txt_FontID(FONT4);
+     print([HEX] FONT4," FONT4, 260 char test\n");
+    pokeW(SYSTEM_TIMER_LO, 0);      // reset timer
+    while(n++<13)
+        print("12345678901234567890\n");
+    wend
+    n := peekW(SYSTEM_TIMER_LO);            // capture timer
+    print(n,"Msec");
+    pause(2000);
+
+    //=============================================================
+    gfx_Cls();
+    //txt_Opacity(TRANSPARENT);
+    n:=0;
+    txt_FontID(MS_SanSerif8x12);
+    print([HEX] MS_SanSerif8x12," MS_SanSerif8x12, 260 char test\n");
+    pokeW(SYSTEM_TIMER_LO, 0);      // reset timer
+    while(n++<13)
+        print("12345678901234567890\n");
+    wend
+    n := peekW(SYSTEM_TIMER_LO);            // capture timer
+    print(n,"Msec");
+    pause(2000);
+
+
+forever
+
+
+
+endfunc

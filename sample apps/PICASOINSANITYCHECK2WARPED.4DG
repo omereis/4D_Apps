@@ -1,0 +1,339 @@
+#platform "uLCD-32PTU"
+
+/*  4DGL Demo Application
+    - Sanity Check Demo -
+    -- PICASO Platform --
+    -- with pitch bending ---
+*/
+
+// this program will run 'stand alone' from ram
+// it is inteded to be called as a prog from a parent process
+
+// displays available memory and bouncing ball.
+// plays sounds when ball hits walls.
+// requires the following files:-
+
+// police.wav
+// laser.wav
+// ding.wav
+// chimes.wav
+// flush.wav
+
+
+#constant ISFUNCTION
+
+
+var pitch;
+
+
+#CONST
+    WHITE         0xFFFF
+    BLACK         0x0000
+    LEFTCOLOUR    0xF800
+    RIGHTCOLOUR   0xFFFF
+    TOPCOLOUR     0x001F
+    BOTTOMCOLOUR  0x07E0
+#END
+
+
+#CONST
+    LEFTHIT  22
+    RIGHTHIT 218
+#END
+
+#constant TOPHIT        22
+#constant BOTTOMHIT     298
+#constant XSPEED        2
+#constant YSPEED        3
+
+
+// constant object definitions
+
+#constant ERASEBALL     $ball_x, ball_y, BALLSIZE, BLACK
+#constant DRAWBALL      $ball_x, ball_y, BALLSIZE, ball_colour
+
+#constant LEFTWALL      $0, 0, 10, 319, LEFTCOLOUR
+#constant TOPWALL       $0, 0, 239, 10, TOPCOLOUR
+
+
+
+#constant RIGHTWALL     $229, 0, 239, 319, RIGHTCOLOUR
+
+
+#constant BOTTOMWALL    $gfx_Rectangle(0, 309, 239, 319, BOTTOMCOLOUR)
+
+#constant BALLSIZE 7  // NOTICE THAT CONSTANTS CAN BE POST DECLARED
+
+
+var ball_x, ball_y, ball_r, ball_colour;
+var xdir, ydir;
+
+
+func drawWalls()
+    gfx_Rectangle(LEFTWALL);            // Draw Left Wall
+    gfx_Rectangle(TOPWALL);             // Draw Top Wall
+    gfx_Rectangle(RIGHTWALL);           // Draw Right Wall
+    BOTTOMWALL;                          // Draw Bottom Wall
+endfunc
+
+func collision()
+
+//    var e;
+//txt_MoveCursor(1,1);
+
+    if(ball_x <= LEFTHIT)
+        ball_x := LEFTHIT;
+        ball_colour := LEFTCOLOUR;
+        xdir := -xdir;
+        file_PlayWAV("laser.wav");
+    endif
+    if(ball_x >= RIGHTHIT)
+        ball_x := RIGHTHIT;
+        ball_colour := RIGHTCOLOUR;
+        xdir := -xdir;
+        file_PlayWAV("police.wav");
+    endif
+    if (ball_y <= TOPHIT)
+        ball_y := TOPHIT;
+        ball_colour := TOPCOLOUR;
+        ydir := -ydir;
+        file_PlayWAV("ding.wav");
+    endif
+    if(ball_y >= BOTTOMHIT)
+        ball_y := BOTTOMHIT;
+        ball_colour := BOTTOMCOLOUR;
+        ydir := -ydir;
+        file_PlayWAV("chimes.wav");
+    endif
+
+
+endfunc
+
+// note that if main has a parameter, the prog will be
+// compiled as a function with a *.4FN extension, otherwise
+// it will have a *.4FN extension
+#IF EXISTS ISFUNCTION
+func main(var mymessage)
+#ELSE
+func main()
+#ENDIF
+
+    var r,n, oldm, k;
+
+    //oldm := -1;
+
+    txt_Set(FONT_SIZE, FONT1);
+
+    putstr("Mounting...\n");
+    if (!file_Mount())
+        while(!file_Mount())
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    print("Drive mounted.\n");
+
+    print("\n\nWave files:-\n");
+    file_Dir("*.wav");
+    pause(3000);
+    gfx_Cls();
+
+    // just make sure we have all our dependencies
+    if(!file_Exists("flush.wav")) putstr("flush.wav not found\n");
+    if(!file_Exists("laser.wav")) putstr("laser.wav not found\n");
+    if(!file_Exists("police.wav")) putstr("police.wav not found\n");
+    if(!file_Exists("ding.wav")) putstr("ding.wav not found\n");
+    if(!file_Exists("chimes.wav")) putstr("chimes.wav not found\n");
+
+    snd_Volume(20);
+    //snd_Volume(30);
+    snd_BufSize(0);
+
+    pitch := 12000;
+    snd_Pitch(pitch);
+    r:=file_PlayWAV("flush.wav");  // play the file
+
+    while ( (n := snd_Playing()) )
+        print(n," blocks to go\n");       // show how many blocks to go
+        pause(250);
+       pitch += 1000;
+       snd_Pitch(pitch);
+    wend
+
+    gfx_Cls();
+    gfx_Set(PEN_SIZE, SOLID);  // legacy progs need this
+
+    txt_Set(TEXT_OPACITY, TRANSPARENT);
+
+
+
+    ball_colour := WHITE;                            // initial ball colour
+    xdir := 1; ydir := 1;                             // initial ball direction
+    ball_x := 50; ball_y := 50;                       // initial ball position
+    gfx_Circle(DRAWBALL);                           // draw the first instance of ball
+    drawWalls();                                    // draw the Walls
+
+    txt_Set(FONT_SIZE, FONT1);
+    gfx_MoveTo(40,2);
+    to(GFX); print([DEC5] mem_Heap()," bytes available");
+
+    txt_FGcolour(BLACK);
+    gfx_MoveTo(4,310);
+    print( "Touch to exit...");
+
+    #IF EXISTS ISFUNCTION       // if compiled as a function
+        gfx_MoveTo(123,310);
+        putstr(mymessage);      // print the callers message
+        //print([HEX] mymessage);      // print the callers message
+   #ENDIF
+
+
+
+    //gfx_Set(SCREEN_MODE, LANDSCAPE_R);
+    gfx_ScreenMode(LANDSCAPE_R);
+
+    txt_Set(TEXT_COLOUR, 0x0000);
+    gfx_MoveTo(80,230);
+    print("Picaso Insanity Check!!!");
+
+
+    txt_Set(FONT_SIZE, FONT3);
+    txt_Set(TEXT_COLOUR, 0x07E0);
+    gfx_Set(SCREEN_MODE, PORTRAIT);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    gfx_Set(PEN_SIZE, SOLID);
+    //gfx_PenSize(SOLID);
+
+    //txt_FontID(MS_SanSerif8x12);
+    txt_FontID(FONT3);
+    gfx_ScreenMode(PORTRAIT);
+
+    touch_Set(TOUCH_ENABLE);                                        // enable the touch screen
+
+
+    repeat
+ //       display_Vsync();                            // wait for vsync for smooth operation
+        pause(10);                      // has no effect on uLCD32032-P1 so use delay instead
+        gfx_Circle(ERASEBALL);                      // erase the ball
+        ball_x := ball_x + xdir * XSPEED;
+        ball_y := ball_y + ydir * YSPEED;
+        collision();                                // detect collision
+        gfx_Circle(DRAWBALL);                       // redraw the ball
+
+        if(!(k++ & 7)) snd_Pitch((ABS(RAND()% 30000)<<1)+8000);
+
+
+
+        n := mem_Heap();
+        if (n != oldm)              // if memsize has changed, update the display
+            oldm := n;
+            txt_MoveCursor(3,3);
+            print( "mem = ",[DEC5] mem_Heap(),"      ");
+        endif
+
+        if(touch_Get(TOUCH_STATUS) == TOUCH_PRESSED)
+            while(touch_Get(TOUCH_STATUS) != TOUCH_RELEASED);
+            while(snd_Playing()); // wait for sound to finish
+            //file_Unmount();       // finished with the drive
+            break;
+        endif
+    forever
+    //file_Unmount(); // no need, calling process will clean this up
+return 0x1234;
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

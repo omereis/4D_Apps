@@ -1,0 +1,112 @@
+#platform "uLCD-32PTU"
+
+/*     4DGL Demo Application
+    - Bouncing Ball with Clipping-
+    -- PICASO Platform --
+*/
+
+// clipping demo
+
+#CONST
+    //WHITE         0xFFFF
+    //BLACK         0x0000
+    LEFTCOLOUR    0xF800
+    RIGHTCOLOUR   0xFFFF
+    TOPCOLOUR     0x001F
+    BOTTOMCOLOUR  0x07E0
+    LEFTWALL      22
+    RIGHTWALL     218
+    TOPWALL       22
+    BOTTOMWALL    298
+    XSPEED        2       // larger value will increase horizontal speed
+    YSPEED        3       // larger value will increase vertical speed
+#END
+
+
+var ball_x, ball_y, ball_r, ball_colour;
+var xdir, ydir, count;
+
+
+//----------------------------------------------------------------------------------------//
+func drawWalls()
+    gfx_RectangleFilled(0, 0, 10, 319, LEFTCOLOUR);          // Draw Left Wall
+    gfx_RectangleFilled(229, 0, 239, 319, RIGHTCOLOUR);      // Draw Right Wall
+    gfx_RectangleFilled(0, 309, 239, 319, BOTTOMCOLOUR);     // Draw Bottom Wall
+    gfx_RectangleFilled(0, 0, 239, 10, TOPCOLOUR);           // Draw Top Wall
+endfunc
+//----------------------------------------------------------------------------------------//
+
+//----------------------------------------------------------------------------------------//
+func collision()
+    if(ball_x <= LEFTWALL)
+        ball_x := LEFTWALL;
+        ball_colour := LEFTCOLOUR;
+        xdir := -xdir;
+    endif
+    if(ball_x >= RIGHTWALL)
+        ball_x := RIGHTWALL;
+        ball_colour := RIGHTCOLOUR;
+        xdir := -xdir;
+    endif
+    if(ball_y <= TOPWALL)
+        ball_y := TOPWALL;
+        ball_colour := TOPCOLOUR;
+        ydir := -ydir;
+    endif
+    if(ball_y >= BOTTOMWALL)
+        ball_y := BOTTOMWALL;
+        ball_colour := BOTTOMCOLOUR;
+        ydir := -ydir;
+    endif
+endfunc
+//----------------------------------------------------------------------------------------//
+
+
+//----------------------------------------------------------------------------------------//
+func main()
+
+    ball_colour := 0xFFFF;                            // initial ball colour
+    xdir := 1; ydir := 1;                             // initial ball direction
+    ball_x := 60; ball_y := 60;                       // initial ball position
+    gfx_Circle(ball_x, ball_y, 10, ball_colour);    // draw the ball
+    drawWalls();                                    // draw the Walls
+
+    gfx_Rectangle(49, 49, 201, 201, 0xFFFF);
+    gfx_ClipWindow(50, 50, 200, 200);
+    gfx_Clipping(ON);
+
+    repeat
+        pause(20);     // needed for uLCD-320-P1 as it has no Vsync
+        gfx_CircleFilled(ball_x, ball_y, 10, 0x0000);      // erase the ball
+        //gfx_RectangleFilled(ball_x, ball_y, ball_x+14, ball_y+14, 0x0000);      // erase the ball
+        ball_x := ball_x + xdir * XSPEED;            // calculate ball new horizontal position
+        ball_y := ball_y + ydir * YSPEED;            // calculate ball new vertical position
+        collision();                                // look for a collision
+        gfx_CircleFilled(ball_x, ball_y, 10, ball_colour); // redraw the ball
+        //gfx_RectangleFilled(ball_x, ball_y, ball_x+14, ball_y+14, ball_colour); // redraw the ball
+    forever
+
+endfunc
+//----------------------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

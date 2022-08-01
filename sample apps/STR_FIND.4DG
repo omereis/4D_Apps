@@ -1,0 +1,73 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: str_Find.4dg
+* Created: 2008/09/12
+* Author:
+* Description:
+**************************************************/
+
+/*
+str_Find("&ptr", "*str");
+
+Syntax:
+str_Find(&ptr, *str);
+
+Usage:
+n := str_Find(&p, "hello");
+
+Description:
+Searches for string str in string buffer pointed to by ptr.
+
+NB:- The pointer ptr is not altered.
+
+Parameters:
+ptr : byte pointer to string buffer.
+str : string to find.
+
+Return values:
+Returns 0 if not found.
+Returns the position into n if successful.
+*/
+
+// Example:
+
+var buffer[100];        // 200 character buffer for a source string
+var p;                  // string pointer
+var n;
+var strings[3];         // for our test strings
+
+
+
+func main()
+
+    txt_Set(FONT_SIZE, FONT2);
+
+    strings[0] := "useful";
+    strings[1] := "string";
+    strings[2] := "way";
+    strings[3] := "class";
+
+
+    to(buffer); print( "and by the way, the string class   is rather      useful    ");
+
+    p := str_Ptr( buffer );  // raise a string pointer so we can use the string functions
+
+    print ("p=",p,"\n\n");
+    p := p + 13;  // offset into the buffer a little way so we dont see word "way"
+
+    print("p=",p,"\n\n");
+
+    n := 0;
+    while ( n < 4 )
+        print( "\"" , [STR] strings[n], "\" result " , str_Find( &p , strings[n++] ) , "\n" );
+    wend
+
+    print( "\nNOTE p is unchanged, p=" , p );
+
+    repeat forever
+
+endfunc
+
+
+

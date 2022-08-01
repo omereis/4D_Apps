@@ -1,0 +1,142 @@
+#platform "uLCD-32PTU"
+
+/*  4DGL Demo Application
+    - Sanity Check Demo -
+    -- PICASO Platform --
+*/
+
+// displays system timer and bouncing ball.
+// This will run on all Picaso platforms.
+
+// Note that PicasoGFX has default text mode of OPAQUE,
+// Picaso legacy was TRANSPARENT. See line  94 for fix.
+
+#inherit "FONT4.fnt"
+
+#CONST
+    WHITE         0xFFFF
+    BLACK         0x0000
+    LEFTCOLOUR    0xF800
+    RIGHTCOLOUR   0xFFFF
+    TOPCOLOUR     0x001F
+    BOTTOMCOLOUR  0x07E0
+#END
+
+
+#CONST
+    LEFTHIT  22
+    RIGHTHIT 218
+#END
+
+#constant TOPHIT        22
+#constant BOTTOMHIT     298
+#constant XSPEED        2
+#constant YSPEED        3
+
+//#CONST RED 0xF800
+
+
+// constant object definitions
+
+#constant ERASEBALL     $ball_x, ball_y, BALLSIZE, BLACK
+#constant DRAWBALL      $ball_x, ball_y, BALLSIZE, ball_colour
+
+#constant LEFTWALL      $0, 0, 10, 319, LEFTCOLOUR
+#constant TOPWALL       $0, 0, 239, 10, TOPCOLOUR
+
+
+
+#constant RIGHTWALL     $229, 0, 239, 319, RIGHTCOLOUR
+
+
+#constant BOTTOMWALL    $gfx_RectangleFilled(0, 309, 239, 319, BOTTOMCOLOUR)
+
+#constant BALLSIZE 7  // NOTICE THAT CONSTANTS CAN BE POST DECLARED
+
+
+var ball_x, ball_y, ball_r, ball_colour;
+var xdir, ydir;
+
+func drawWalls()
+    gfx_RectangleFilled(LEFTWALL);            // Draw Left Wall
+    gfx_RectangleFilled(TOPWALL);             // Draw Top Wall
+    gfx_RectangleFilled(RIGHTWALL);           // Draw Right Wall
+    BOTTOMWALL;                          // Draw Bottom Wall
+endfunc
+
+func collision()
+    if(ball_x <= LEFTHIT)
+        ball_x := LEFTHIT;
+        ball_colour := LEFTCOLOUR;
+        xdir := -xdir;
+    endif
+    if(ball_x >= RIGHTHIT)
+        ball_x := RIGHTHIT;
+        ball_colour := RIGHTCOLOUR;
+        xdir := -xdir;
+    endif
+    if (ball_y <= TOPHIT)
+        ball_y := TOPHIT;
+        ball_colour := TOPCOLOUR;
+        ydir := -ydir;
+    endif
+    if(ball_y >= BOTTOMHIT)
+        ball_y := BOTTOMHIT;
+        ball_colour := BOTTOMCOLOUR;
+        ydir := -ydir;
+    endif
+
+
+endfunc
+
+func main()
+
+    txt_Set(TEXT_OPACITY, TRANSPARENT);   // for Picaso legacy compatibility
+
+    ball_colour := WHITE;                            // initial ball colour
+    xdir := 1; ydir := 1;                             // initial ball direction
+    ball_x := 50; ball_y := 50;                       // initial ball position
+    gfx_CircleFilled(DRAWBALL);                           // draw the first instance of ball
+    drawWalls();                                    // draw the Walls
+
+    txt_Set(FONT_SIZE, FONT2);
+    gfx_MoveTo(40,2);
+    to(GFX); print(mem_Heap()," bytes available");
+
+
+    gfx_Set(SCREEN_MODE, LANDSCAPE_R);
+
+    txt_Set(TEXT_COLOUR, 0x0000);
+    gfx_MoveTo(100,230);
+    to(GFX); print("Picaso Sanity Check!!!");
+
+
+    txt_Set(FONT_SIZE, FONT4);
+    txt_Set(TEXT_COLOUR, 0x07E0);
+    gfx_Set(SCREEN_MODE, PORTRAIT);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    touch_Set(TOUCH_ENABLE);
+
+    repeat
+
+        pause(10);                      // has no effect on uLCD32032-P1 so use delay instead
+        gfx_CircleFilled(ERASEBALL);                      // erase the ball
+        ball_x := ball_x + xdir * XSPEED;
+        ball_y := ball_y + ydir * YSPEED;
+        collision();                                // detect collision
+        gfx_CircleFilled(DRAWBALL);                       // redraw the ball
+
+        txt_MoveCursor(10,10);
+        print( [HEX] sys_T() );     // show the system timer
+
+        if(touch_Get(TOUCH_STATUS) == TOUCH_PRESSED) break;   // touch exits
+
+    forever
+
+    while(touch_Get(TOUCH_STATUS) != TOUCH_RELEASED);  // wait for release
+
+endfunc
+
+
+

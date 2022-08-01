@@ -1,0 +1,581 @@
+/* -----------------------
+Base styles
+------------------------*/
+
+body
+{
+	margin: 0;
+	padding: 0;
+	color: #333;
+	background-color: #eee;
+	font: 1em/1.2 "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+	margin: 0 0 .5em;
+	font-weight: 500;
+	line-height: 1.1;
+}
+
+#remedyo1{
+        font-weight: 500;
+        font-size: 1.2em;  
+        max-width: 90%;        
+        padding: 10px 0;        
+        margin: 5px auto;
+        text-align: justify;
+}
+
+#panel{
+    max-width: 90%;
+    margin: auto;
+}
+
+#slidePanelMessage1{    
+    margin: auto;
+    width: auto;
+    //background-color: white;
+    //padding: 5px 0;
+    //color: 
+}
+
+
+h1 { font-size: 2.25em; } /* 36px */
+h2 { font-size: 1.75em; } /* 28px */
+h3 { font-size: 1.375em; } /* 22px */
+h4 { font-size: 1.125em; } /* 18px */
+h5 { font-size: 1em; } /* 16px */
+h6 { font-size: .875em; } /* 14px */
+
+p
+{
+	margin: 0 0 1.5em;
+	line-height: 1.5;
+        text-align: justify;
+}
+
+blockquote
+{
+	padding: 1em 2em;
+	margin: 0 0 2em;
+	//border-left: 5px solid #eee;
+        border-left: 5px solid gray;
+        background-color: #d1e5f9;
+}
+
+hr
+{
+	height: 0;
+	margin-top: 1em;
+	margin-bottom: 2em;
+	border: 0;
+	border-top: 1px solid #ddd;
+}
+
+table
+{
+	background-color: transparent;
+	border-spacing: 0;
+	border-collapse: collapse;
+	border-top: 1px solid #ddd;
+}
+
+th, td
+{
+	padding: .5em 1em;
+	vertical-align: top;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+a:link { color: #006699; font-weight: bold;}
+a:visited { color: purple; }
+a:focus { color: black; }
+//a:hover { color: green; }
+
+a:active { color: red; }
+
+/* added styles here*/
+
+
+/* -----------------------
+Layout styles
+------------------------*/
+
+.container
+{
+	//max-width: 70em;
+        max-width: 70em;
+	margin: 0 auto;
+        //background-color: #99ff99; // debug
+        //padding: 1em 1.25em;    // debug 
+}
+
+.header
+{
+	color: #fff;
+	//background: #999;
+        background: #CC0000;
+	padding: 1em 1.25em;        
+}
+
+.header-heading { 
+    margin: 0; 
+    //background-color: yellow; //debug 
+}
+
+.nav-bar
+{
+	//background: #000;
+        background: #006699;
+	//padding: 0;
+        //padding: 5px; //debug
+}
+
+
+.customBar{
+   	//color: #fff;
+	//background: #999;
+        //background: #CC0000;
+	padding: .5em 1.25em; 
+        //padding: 1px 1px 1px 1px; 
+        //height: 1em;
+        //height: 10px;
+        //width: 50em;
+        //text-align: right;        
+}
+
+.content
+{
+	overflow: hidden;
+	padding: 1em 1.25em;
+	background-color: #fff;
+        //background-color: #ff9900; //debug
+}
+
+/* -----------------------
+main
+------------------------*/
+.main
+{
+	margin-bottom: 1em;
+}
+
+
+/* -----------------------
+aside
+------------------------*/
+.aside
+{
+	margin-bottom: 1em;
+        background-color: #FFE680;
+        //padding: 5px;
+        //padding-left: 1px;
+        //width: 100px;
+        //height: 200px;
+        //padding-bottom: 0;
+        //border-top: #006699 1px;
+        //border-style: solid;
+        border-top: solid 4px maroon;
+}
+
+
+/* -----------------------
+Footer
+------------------------*/
+
+.footer
+{
+	color: #fff;
+	background: #000;
+	padding: 1em 1.25em;
+}
+
+/* -----------------------
+Nav
+------------------------*/
+
+.nav
+{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.nav li
+{
+	display: inline;
+	margin: 0;
+}
+
+.nav a
+{
+	display: block;
+	padding: .7em 1.25em;
+	color: #fff;
+	text-decoration: none;
+	border-bottom: 1px solid gray;
+}
+
+.nav a:link { color: white; }
+.nav a:visited { color: white; }
+
+.nav a:focus
+{
+	//color: black;
+	//background-color: white;
+        color: black;
+        background-color: #FFE680;
+        //font-style: italic;
+}
+
+.nav a:hover
+{
+	//color: orangered;
+        //color: #ff6633;
+        //color: silver;
+	//background-color: yellow;
+        //font-style: italic;
+        text-decoration: underline;
+}
+
+.nav a:active
+{
+	//color: white;
+	//background-color: red;
+        //color: black;
+        //background-color: #ffff66;
+        color: black;
+	background-color: #FFE680;
+        //font-style: italic;
+}
+
+.nav-bar-active-page{
+        color: black;
+        background-color: #FFE680;
+}
+
+/* -----------------------
+Single styles
+------------------------*/
+
+.img-responsive { 
+    max-width: 100%; 
+    border: 1px silver;
+    border-style: solid;
+    //alignment-adjust: central;
+    //margin: auto;
+    //alignment-adjust: middle;
+}
+
+.imgContainer{
+    margin: auto;
+    //width: 60%;
+    //border:3px solid #8AC007;
+    //padding: 10px;
+
+}
+
+.btn
+{
+	color: #fff !important;
+	background-color: royalblue;
+	border-color: #222;
+	display: inline-block;
+	padding: .5em 1em;
+	margin-bottom: 0;
+	font-weight: 400;
+	line-height: 1.2;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	border: 1px solid transparent;
+	border-radius: .2em;
+	text-decoration: none;
+}
+
+.btn:hover
+{
+	color: #fff !important;
+	background-color: green;
+}
+
+.btn:focus
+{
+	color: #fff !important;
+	background-color: black;
+}
+
+.btn:active
+{
+	color: #fff !important;
+	background-color: red;
+}
+
+/* -----------------------
+table
+------------------------*/
+
+.table
+{
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 20px;
+}
+
+/* -----------------------
+table
+------------------------*/
+
+.list-unstyled
+{
+	padding-left: 0;
+	list-style: none;
+}
+
+.list-inline
+{
+	padding-left: 0;
+	margin-left: -5px;
+	list-style: none;
+}
+
+.list-inline > li
+{
+	display: inline-block;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+/* -----------------------
+Wide styles
+------------------------*/
+
+/* -----------------------
+Slide panel
+------------------------*/
+
+#slide {
+	//margin: 0;
+        margin-top: 0px;
+	padding: 0 0 0 0;
+	border-top: solid 4px maroon;
+	background: url(../images/white-arrow.gif) no-repeat center top;
+        background-color: white;        
+}
+
+.btn-slide {
+	background: url(../images/white-arrow.gif) no-repeat right -50px;
+	text-align: center;
+	width: 144px;
+	height: 31px;
+	padding: 10px 10px 0 0;
+	margin: 0 auto;
+	display: block;
+	font: bold 120%/100% Arial, Helvetica, sans-serif;
+	color: white;
+	text-decoration: none;
+        background-color: #CC0000;
+        cursor: pointer;
+}
+
+.active {
+	background-position: right 12px;
+}
+
+.btn-slide:hover{
+    color: yellow;
+}
+
+
+
+/* -----------------------
+Tool tips under class .withToolTip
+------------------------*/
+
+  .withToolTip + .tooltip > .tooltip-inner {
+      background-color: #FFE680; 
+      color: black; 
+      border: 1px solid silver; 
+      padding: 15px;
+      font-size: 15px;      
+      text-align: justify;
+      font-weight: bold;      
+      //width: 500px;
+  }
+  /* Tooltip on top */
+  .withToolTip + .tooltip.top > .tooltip-arrow {
+      border-top: 5px solid #CC0000;
+  }
+  /* Tooltip on bottom */
+  .withToolTip + .tooltip.bottom > .tooltip-arrow {
+      border-bottom: 5px solid #CC0000;
+  }
+  /* Tooltip on left */
+  .withToolTip + .tooltip.left > .tooltip-arrow {
+      border-left: 5px solid #CC0000;
+  }
+  /* Tooltip on right */
+  .withToolTip + .tooltip.right > .tooltip-arrow {
+      border-right: 5px solid #CC0000;
+  }
+  
+/* -----------------------
+simulation panels and canvasses
+------------------------*/
+  
+.simulationPanels{
+    border: 1px red;
+    border-style: solid;
+}
+
+ .canvasContainers{ 
+    max-width: 100%; 
+    border: 1px black;
+    border-style: solid;    
+    //margin: auto;        
+    overflow:auto;
+    background-color: #d1e5f9;
+    padding: 1em 0;
+}
+
+.canvasses{
+    border: 1px solid silver;
+    margin: auto;
+    //width: 464px;
+    //height: 300px;
+    background-color: #FFE680;
+}
+
+#canvas1Border{
+    background-color: pink;
+    background-image: url("../images/scopeWidgetOnDisplay.png");
+}
+
+.simButtonContainers{
+    max-width: 100%; 
+    border: 1px blue;
+    border-style: solid;    
+    //margin: auto;        
+    //overflow:auto;
+    background-color: #d1e5f9;
+    padding: 1em 0;
+}
+
+.simulationButtons{
+    //border: 1px solid silver;
+    border: none;
+    margin: 0 auto;
+    //max-width: 200px;
+    //height: 300px;
+    background-color: #FFE680;
+    padding: 1em 0;
+    cursor: pointer;
+    border-bottom: 2px solid silver;
+}
+
+
+/* -----------------------
+when browser window width is equal to or larger than 55em
+------------------------*/
+
+@media (min-width: 55em)
+{
+	.header { padding: 1.5em 3em; }
+	.nav-bar { padding: 1em 3em; }
+	//.content { padding: 2em 3em; }
+        .content { padding: 2em 3em; }
+        .customBar{ padding: .5em 3em;}
+	.main
+	{
+		float: left;
+		width: 65%;
+		//margin-right: 5%;
+                margin-right: 5%;   // debug
+		margin-bottom: 1em;
+                //background-color: tomato; // debug
+	}
+
+	.aside
+	{
+		float: left;
+		width: 30%;
+		margin-bottom: 1em;
+                //background-color: #ccc; // debug
+	}
+
+	.footer { padding: 2em 3em; }
+	
+	.nav li
+	{
+		display: inline;
+		margin: 0 1em 0 0;
+	}
+	
+	.nav a
+	{
+		display: inline;
+		padding: 0;
+		border-bottom: 0;
+	}
+        
+    #remedyo1{
+        max-width: 90%;         
+        //padding: 10px 0;        
+        //margin: 5px auto;
+        text-align: justify;
+    }  
+
+}
+
+/* -----------------------
+when browser window width is equal to or larger than 69em
+------------------------*/
+
+@media (min-width: 69em){
+    
+    .simulationPanels{
+        border: 1px orange;
+        border-style: solid;
+        padding: 0.5em;
+    }
+    .canvasContainers{ 
+       width: 70%; 
+       margin-right: 3%;
+       border: 1px black;
+       border-style: solid;    
+       //margin: auto;        
+       overflow:auto;
+       background-color: #d1e5f9;
+       padding: 1em 0;
+       //float: left;
+       display: inline-block;
+       vertical-align: middle;
+    }
+    
+    .simButtonContainers{
+        width: 25%; 
+        border: 1px blue;
+        border-style: solid;    
+        //margin: 8em 0;;        
+        //overflow:auto;
+        background-color: #d1e5f9;
+        padding: 1em 0;
+        //float: left;
+        display: inline-block;
+        vertical-align: middle;
+        //alignment-baseline: middle;
+    }
+    
+    .simulationButtons{
+        padding: 0.7em 0;
+        margin: 1em auto;
+        border: none;
+        border-radius: 5px;
+    }   
+    
+}
+
+

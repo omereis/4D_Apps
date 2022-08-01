@@ -1,0 +1,165 @@
+#platform "pixxiLCD-13P2CT-CLB"
+
+
+// Program Skeleton 1.4 generated 8/24/2020 1:36:04 AM
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+// var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
+
+#inherit "UpdatedGfxFirmwareConst.inc"
+
+#inherit "ESP8266_4DGL_Flash.inc"
+
+// Contains the Wi-Fi network SSID and Password
+#inherit "ESP_WiFi_Network.inc"
+// Edit this file to match your Wi-Fi network
+// The changes will be used for all other examples
+
+func main()
+
+    gfx_Set(SCREEN_MODE, PORTRAIT);
+
+    media_Init();
+    hndl := file_LoadImageControl(0, 0, 3);
+
+    gfx_MoveTo(0, 95);
+    if (img_FileCheckUpdate(hndl, hndl[IMG_COUNT] - 1, CHECKUPDATE_QUERY) == CHECKUPDATE_NEWFILE)
+        putstr("Program will now update\n") ;
+        var res;
+        res := img_FileCheckUpdate(hndl, hndl[IMG_COUNT] - 1, CHECKUPDATE_UPDATENEWER) ;
+        print("Update Error: ", res, "\n");
+    endif
+
+    ESP_Initialize(ESP_4DISCOVERY13);
+
+    WiFi_SetMode(WIFI_STATION);
+
+    print("Connecting to ", [STR]SSID);
+    WiFi_Begin(SSID, PASSWORD);
+    while(WiFi_Status() != WIFI_CONNECTED)
+        pause(500);
+        putch('.');
+    wend
+    putch('\n');
+    gfx_Cls();
+
+    var frame := 0;
+    // Coolgauge1 1.0 generated 8/24/2020 1:41:00 AM
+    img_SetWord(hndl, iCoolgauge1, IMAGE_INDEX, frame) ; // where frame is 0 to 10 (for a displayed -1 to -1)
+    img_Show(hndl, iCoolgauge1);
+
+    // Userbutton1 1.0 generated 8/24/2020 1:41:02 AM
+    img_ClearAttributes(hndl, iUserbutton1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    img_SetWord(hndl, iUserbutton1, IMAGE_INDEX, 0); // where state is 0 for up and 1 for down
+    img_Show(hndl, iUserbutton1);  // show button, only do this once
+
+    var touchState, touchImg, pressedImg;
+    touch_Set(TOUCH_ENABLE);
+
+    var gaugeTimer;
+        gaugeTimer := sys_T();
+
+    repeat
+        if (sys_T() - gaugeTimer > 500) // update gauge every half second
+            frame++;
+            if (frame > 10) frame := 0;
+            img_SetWord(hndl, iCoolgauge1, IMAGE_INDEX, frame) ; // where frame is 0 to 10 (for a displayed -1 to -1)
+            img_Show(hndl, iCoolgauge1);
+            gaugeTimer := sys_T();
+        endif
+
+        touchState := touch_Get(TOUCH_STATUS);
+        touchImg := img_Touched(hndl, -1);
+
+        switch (touchState)
+            case TOUCH_PRESSED:
+                pressedImg := touchImg;
+                if (touchImg == iUserbutton1)
+                    img_SetWord(hndl, iUserbutton1, IMAGE_INDEX, 1); // where state is 0 for up and 1 for down
+                    img_Show(hndl, iUserbutton1);
+                endif
+                break;
+            case TOUCH_RELEASED:
+                if ((touchImg == pressedImg) && (touchImg == iUserbutton1))
+                    img_SetWord(hndl, iUserbutton1, IMAGE_INDEX, 0); // where state is 0 for up and 1 for down
+                    img_Show(hndl, iUserbutton1);
+                    goto PerformUpdate;
+                endif
+                break;
+            default:
+                break;
+        endswitch
+    forever
+
+PerformUpdate:
+
+    gfx_Cls();
+    gfx_MoveTo(0, 95);
+    putstr("Waiting for file uploads @");
+    WiFi_PrintLocalIP(0); // Print local IP to current cursor position
+    putch('\n');
+
+    ESP_AttachWebUpdateHandler(handleGfxUpdate);
+    if (!ESP_ToggleWebUpdater())   // Starts the file upload server
+        print("Can't start web updater\n");
+        repeat forever
+    endif
+    print("Waiting for update...\n");
+
+    var isUpdating := 0;
+    var timer;
+        timer := sys_T();
+
+    repeat
+        // Required to run as frequent as possible
+        isUpdating := ESP_CheckWebUpdater();
+        // Ideally, there is no other ESP8266/ESP32 code while running this
+    until(isUpdating || (sys_T() - timer >= 30000)); // Wait up to 30 seconds
+
+    if (!isUpdating) // If no update has is initiated
+        ESP_ToggleWebUpdater(); // Stop the file upload server
+        print("No update was received\n");
+    else // Otherwise, immediately handle the update
+        ESP_HandleWebUpdater(); // This will block until update ends
+        // ESP_ToggleWebUpdater(); // Stop the file upload server
+        // Not required if the display is going to reset resulting
+        // to reinitialization of ESP8266/ESP32
+
+        // Reset the display when done
+        print("Web update ended... Resetting in 5 seconds..\n");
+        pause(5000);
+        SystemReset();
+    endif
+
+    repeat forever
+
+endfunc
+
+// Define a Handler Function
+func handleGfxUpdate(var state, var index, var * progress)
+    var y, ptr;
+    switch (state)
+        case WEB_UPDATE_FILE:
+            print("Receiving File No. ", index, "\n");
+            break;
+        case WEB_CONTINUE_FILE:
+            y := peekW(TEXT_YPOS);
+            ptr := str_Ptr(progress);
+            gfx_MoveTo(0, y);
+            str_Printf(&ptr, "Received %lu bytes     ");
+            break;
+        case WEB_END_FILE:
+            print("\nReceived File No. ", index, " successfully\n");
+            break;
+        case WEB_END_UPDATE:
+            print("\nFile(s) Received Successfully\n");
+            break;
+        case WEB_UPDATE_ERROR:
+        default:
+            print("\nError Occurred while receiving file(s)\n");
+            break;
+    endswitch
+endfunc

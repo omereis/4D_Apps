@@ -1,0 +1,516 @@
+#platform "Gen4-uLCD-70DT"
+
+
+// Program Skeleton 1.5 generated 28/02/2022 12:08:04
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+#STACK 400
+
+// var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
+
+#inherit "Com-Alon-touchConst.inc"
+
+#DATA
+    // IGauge2 Data Start
+    word IIGauge2 400, 152, 235, 40, 118, 0, 20, 0, 0, 0x18E3, 0x0280, LIME,
+        0x5280, YELLOW, 0x5000, RED, 75, 53, 0x2
+    // IGauge2 Data End
+    // IGauge1 Data Start
+    word IIGauge1 400, 72, 235, 40, 118, 0, 10, 0, 0, 0x18E3, 0x0280, LIME,
+        0x5280, YELLOW, 0x5000, RED, 75, 53, 0x2
+    // IGauge1 Data End
+
+   byte input_buf "First my name\r -999.00, 2.222e-06, 3.555, 15.444, 0xAA",0         // a  pointer to input string via rs232 24/02/2022
+   byte input_buf1 "Second my name\r 3.333e-06, 4440.44, 8.888, 7.777, 0x55",0         // a  pointer to input string via rs232 24/02/2022
+
+
+#END
+
+
+var vIGauge2RAM[WIDGET_RAM_SPACE] ;
+var vIGauge1RAM[WIDGET_RAM_SPACE] ;
+
+var Handle;
+
+//   var OldStatusBits := 0;
+
+var L1_posx1, L1_posy1;
+var L1_posx2, L1_posy2;
+var L2_posx1, L2_posy1;
+var L2_posx2, L2_posy2;
+
+var change := 0 ;
+var loop;
+
+var Resnum := 0;
+
+var state_touch := 1;
+
+var p, q;                  // a var as a pointer
+var inputPtr, i, parts, StatBits;                          // a  pointer to input string via rs232 24/02/2022
+
+var buf_Ptr, buf1_Ptr, str0_Ptr, str1_Ptr, str2_Ptr, str3_Ptr, str4_Ptr;     // a  pointer to strings 03/04/2022
+
+var gauge1_val, gauge2_val;
+var gauge1_flt[2], gauge2_flt[2];
+
+var tmpstr0[10];                              // a  pointer to input string via rs232 24/02/2022
+var tmpstr1[10];
+var tmpstr2[10];
+var tmpstr3[10];
+var tmpstr4[10];
+var tmpstr5[10];
+var tmpstr6[10];
+
+
+
+func UpdateStrings( )
+
+// Statictext1 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iStatictext1) ;
+    L1_posx1 := img_GetWord(Handle, iStatictext1, IMAGE_XPOS);
+    L1_posy1 := img_GetWord(Handle, iStatictext1, IMAGE_YPOS);
+    L1_posx2 := img_GetWord(Handle, iStatictext1, IMAGE_WIDTH);
+    L1_posy2 := img_GetWord(Handle, iStatictext1, IMAGE_HEIGHT);
+
+    L1_posx2 += L1_posx1;
+    L1_posy2 += L1_posy1;
+
+//    gfx_MoveTo(L1_posx1, L1_posy1);
+//    putstr("          ");
+
+    gfx_RectangleFilled(L1_posx1,L1_posy1,L1_posx2,L1_posy2, BLACK);
+
+    gfx_MoveTo(L1_posx1, L1_posy1);
+    putstr(tmpstr0);
+    to(COM0); print("n\str1 is = ", [STR]tmpstr0, "\n");
+    pause(5000);
+    // Statictext2 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iStatictext2) ;
+    L2_posx1 := img_GetWord(Handle, iStatictext2, IMAGE_XPOS);
+    L2_posy1 := img_GetWord(Handle, iStatictext2, IMAGE_YPOS);
+    L2_posx2 := img_GetWord(Handle, iStatictext1, IMAGE_WIDTH);
+    L2_posy2 := img_GetWord(Handle, iStatictext1, IMAGE_HEIGHT);
+
+    L2_posx2 += L2_posx1;
+    L2_posy2 += L2_posy1;
+
+    gfx_RectangleFilled(L2_posx1,L2_posy1,L2_posx2,L2_posy2, BLACK);
+
+    gfx_MoveTo(L2_posx1, L2_posy1);
+    putstr(tmpstr1);
+    to(COM0); print("n\str2 is = ", [STR]tmpstr1, "\n");
+    pause(5000);
+endfunc
+
+
+func UpdateLeds( var OldStatusBits )
+
+    var state := 0;
+    var StatusBits;
+
+    OldStatusBits := str_Ptr(tmpstr4);
+    str_GetW(&OldStatusBits,&StatusBits);
+//    str_PutByte(&StatusBits, str_GetByte(OldStatusBits));
+//    StatusBits := str_GetByte(&OldStatusBits);
+
+
+/*    if ( OldStatusBits == StatusBits )
+        return;
+    endif
+    OldStatusBits := StatusBits;
+    */
+    to(COM0); print("n\rStatusBits is = ", [HEX2]StatusBits, "\n");
+    // Userled1 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled1) ;  // show initialy, if required
+    state := ( (StatusBits & 0x01 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled1, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled1) ;
+
+    // Userled2 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled2) ;  // show initialy, if required
+    state := ( (StatusBits & 0x02 ) > 0 ) ? 1 : 0;    img_SetWord(Handle, iUserled2, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled2) ;
+
+    // Userled3 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled3) ;  // show initialy, if required
+    state := ( (StatusBits & 0x04 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled3, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled3) ;
+
+    // Userled4 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled4) ;  // show initialy, if required
+    state := ( (StatusBits & 0x08 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled4, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled4) ;
+
+    // Userled5 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled5) ;  // show initialy, if required
+    state := ( (StatusBits & 0x10 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled5, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled5) ;
+
+    // Userled6 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled6) ;  // show initialy, if required
+    state := ( (StatusBits & 0x20 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled6, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled6) ;
+
+    // Userled7 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled7) ;  // show initialy, if required
+    state := ( (StatusBits & 0x40 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled7, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled7) ;
+
+    // Userled8 1.0 generated 28/02/2022 14:10:39
+    img_Show(Handle,iUserled8) ;  // show initialy, if required
+    state := ( (StatusBits & 0x80 ) > 0 ) ? 1 : 0;
+    img_SetWord(Handle, iUserled8, IMAGE_INDEX, state) ;      // where state is 0 (Off) or 1 (On)
+    img_Show(Handle,iUserled8) ;
+
+endfunc
+
+func UpdateGauge( var val1, var val2)
+
+    // IGauge1 1.0 generated 28/02/2022 14:10:40
+    gfx_Gauge(val1, vIGauge1RAM, IIGauge1) ;    // where value is 0 to 10
+
+    // IGauge2 1.0 generated 28/02/2022 14:10:40
+    gfx_Gauge(val2, vIGauge2RAM, IIGauge2) ;    // where value is 0 to 20
+
+endfunc
+
+
+func ProcessString ( var Input_Str )
+
+//inputPtr := str_Ptr(input_buf);
+inputPtr := str_Ptr(Input_Str);
+        to(COM0);print("\n",[STR]Input_Str,"\n");
+        parts := 0;
+        p := str_Find( &inputPtr, "\r");
+        p := p+1;
+        q := str_Ptr(tmpstr0);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        to(COM0);print ( "\nFirst partial string = ", [STR]tmpstr0,  " parts = ", parts, "\n");
+        parts++;
+        pause(100);
+//       str_Printf(&tmpstr0[0],"%s\n");
+
+ //inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr1);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        to(COM0);print ( "\nSecond partial string = ", [STR]tmpstr1, " parts = ", parts, "\n");
+        parts++;
+        pause(100);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr2);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        to(COM0);print ( "\nThird partial string = ", [STR]tmpstr2, " parts = ", parts, "\n");
+        parts++;
+        pause(100);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr3);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        to(COM0);print ( "\nFourth partial string = ", [STR]tmpstr3, " parts = ", parts, "\n");
+        parts++;
+        pause(100);
+//        q := str_Ptr(tmpstr1);
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr4);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        to(COM0);print ( "\n\n\nFifth partial string =", [STR]tmpstr4, " parts = ", parts, "\n");
+        parts++;
+        pause(100);
+
+        return;
+        /* For next version
+
+        p := p+1;
+        q := str_Ptr(tmpstr5);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nSixth partial string = ", [STR]tmpstr5, "\n");
+        parts++;
+        pause(1000);
+
+//inputPtr := str_Ptr(input_buf);
+
+        p := p+1;
+        q := str_Ptr(tmpstr6);
+        while ( str_GetByte(p) != 0x2c)
+        str_PutByte(q, str_GetByte(p));
+        p++;
+        q++;
+        wend
+//       str_PutByte(q ,0);
+        print ( "\nSixth partial string = ", [STR]tmpstr6, "\n");
+        parts++;
+        pause(1000);
+
+        End of next version */
+
+/*        p := str_Ptr(tmpstr4);
+        str_GetW(&p,&StatBits);
+
+        print ( "\n\n\nThe StausBits in Hex = ",[HEX4] StatBits, " Converted to int = ", StatBits, "\n");
+        */
+//        print ( "\nThe number of parts is = ", parts, "\n");
+
+endfunc
+
+func main()
+//  Uncomment the following if uSD and uSD based GCI images, fonts or strings used.
+
+//  var hstrings ; // Handle to access uSD strings, uncomment if required
+//  var hFontx ;   // Handle to access uSD fonts, uncomment if required and change n to font number
+
+    putstr("Mounting...From RAM\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+
+    Resnum++;
+
+
+//    gfx_TransparentColour(0x0020);    // uncomment if transparency required, please understand why and when you need to use this
+//    gfx_Transparency(ON);             // uncomment if transparency required, as generally there is a performance hit when using it
+
+//  hFontn := file_LoadImageControl("COM-AL~2.dan", "COM-AL~2.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+//  hstrings := file_Open("COM-AL~2.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+
+    Handle := file_LoadImageControl("COM-AL~2.dat", "COM-AL~2.gci", 1);
+
+    // Form1 1.1 generated 28/02/2022 14:10:39
+
+    // Label1 1.0 generated 28/02/2022 14:10:39
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(32, 84) ;
+    putstr("LABEL1:") ;
+
+    // Label2 1.0 generated 28/02/2022 14:10:39
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(32, 164) ;
+    putstr("LABEL2:") ;
+
+    // Label3 1.0 generated 28/02/2022 14:10:40
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(400, 56) ;
+    putstr("0") ;
+
+    // Label4 1.0 generated 28/02/2022 14:10:40
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(624, 56) ;
+    putstr("10") ;
+
+    // Label5 1.0 generated 28/02/2022 14:10:40
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(400, 136) ;
+    putstr("0") ;
+
+    // Label6 1.0 generated 28/02/2022 14:10:40
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(620, 136) ;
+    putstr("20") ;
+
+
+    // Label7 1.0 generated 15/03/2022 11:10:55
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(260, 164) ;
+    putstr("Change") ;
+
+
+//  Uncomment the following if Flash and Flash based GCF images, fonts or strings used.
+/*
+//    if SPI0 (Traditional uSD SPI port) Used
+//    spi_Init(SPI_FAST, SPI_IS_FLASH);  // replace SPI_IS_FLASH with 0 if PmmC < v27 and flash <= 16MB
+//    if SPI1 (other SPI pins) Used
+//    pin_HI(EnablePin) ;                   // EnablePin is PA pin connected to SPI_CS
+//    pin_Set(PIN_OUT,EnablePin) ;          // EnablePin is PA pin connected to SPI_CS
+//    SPI1_SCK_pin(FlashSCK?<) ;            // FlashSCK is PA pin connected to SPI_SCK
+//    SPI1_SDI_pin(FlashSDI?<) ;            // FlashSDI is PA pin connected to SPI_SDI
+//    SPI1_SDO_pin(FlashSDO?<) ;            // FlashSDO is PA pin connected to SPI_SDO
+//    SPI1_Init(SPI_SPEED15, SPI8_MODE_5  + SPI_IS_FLASH, EnablePin) ; // remove SPI_IS_FLASH if PmmC < v27 and flash <= 16MB, EnablePin is USD_ENABLE or PA?
+    spiflash_SetAdd(SPI0, 0, 0);
+    Handle := spiflash_LoadGCFImageControl(SPIx, EnablePin);    // SPIx is SPI0 or SPI1, as appropriate, EnablePin is USD_ENABLE or PA?
+*/
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+
+    img_Show(Handle,ALL);
+
+        // Rectangle1 1.0 generated 15/03/2022 8:36:39
+    gfx_OutlineColour(WHITE) ;
+    gfx_LinePattern(LPFINE) ;
+    gfx_RectangleFilled(264, 108, 303, 147, YELLOW) ;
+    gfx_OutlineColour(BLACK) ;
+    gfx_LinePattern(LPSOLID) ;
+
+    touch_DetectRegion(264, 108, 303, 147); // limit touch detect region to within the rectangle
+
+    touch_Set(TOUCH_ENABLE); //  Enable rectangle touch
+
+    pause(10000);
+
+ //   to(COM0); print ("\nNUMBER OF RESETS = ", Resnum,"\n");
+
+    repeat
+
+//    state := touch_Get(TOUCH_STATUS); // get touchscreen status
+
+    if (state_touch == TOUCH_PRESSED) // see if touch hit
+
+        change++;         // swap the display to the second view
+
+        to(COM0);print("\nChange is = ", change);
+
+        loop := change % 2;
+
+        if ( loop  )
+
+            gfx_RectangleFilled(264, 108, 303, 147, YELLOW) ;
+
+            buf_Ptr := str_Ptr( input_buf );
+
+            ProcessString ( buf_Ptr );
+
+            str4_Ptr := str_Ptr( tmpstr4 );
+
+            UpdateLeds( str4_Ptr );
+
+//            str0_Ptr := str_Ptr( tmpstr0 );
+
+//            str1_Ptr := str_Ptr( tmpstr1 );
+
+            UpdateStrings( );
+
+            p := str_Ptr( tmpstr2 );
+            flt_VAL( gauge1_flt, p );
+
+            to(COM0);print("\n\nGauge1_val = ");
+            gauge1_val := flt_FTOI(gauge1_flt);
+            to(COM0);print( gauge1_val,"\n");
+
+            p := str_Ptr( tmpstr3 );
+            flt_VAL( gauge2_flt, p );
+            gauge2_val := flt_FTOI(gauge2_flt);
+            to(COM0);print("\n\nGauge2_val = ");
+            to(COM0);print( gauge2_val,"\n");
+
+            UpdateGauge( gauge1_val, gauge2_val);
+
+ //           break;
+
+        else
+
+            gfx_RectangleFilled(264, 108, 303, 147, BLUE) ;
+
+            buf1_Ptr := str_Ptr( input_buf1 );
+
+            ProcessString ( buf1_Ptr );
+
+            gfx_RectangleFilled(264, 108, 303, 147, GREEN) ;
+
+            pause(10000);
+
+
+            str4_Ptr := str_Ptr( tmpstr4 );
+
+            UpdateLeds( str4_Ptr );
+
+
+//            str0_Ptr := str_Ptr( tmpstr0 );
+
+//            str1_Ptr := str_Ptr( tmpstr1 );
+
+//            UpdateStrings( str0_Ptr, str1_Ptr );
+
+            UpdateStrings( );
+
+
+            p := str_Ptr( tmpstr2 );
+            flt_VAL( gauge1_flt, p );
+            to(COM0);print("\n\nGauge1_val = ");
+            gauge1_val := flt_FTOI(gauge1_flt);
+            to(COM0);print( gauge1_val,"\n");
+
+            p := str_Ptr( tmpstr3 );
+            flt_VAL( gauge2_flt, p );
+            gauge2_val := flt_FTOI(gauge2_flt);
+            to(COM0);print("\n\nGauge2_val = ");
+            to(COM0);print( gauge2_val,"\n");
+
+
+
+            UpdateGauge( gauge1_val, gauge2_val);
+
+//            break;
+//            pause(50000);
+
+
+
+        endif
+
+     endif
+
+//    while(touch_Get(TOUCH_STATUS) != TOUCH_PRESSED); //Wait for touch
+
+    state_touch := touch_Get(TOUCH_STATUS); // get touchscreen status
+//    pause(250);
+    forever
+
+endfunc
+

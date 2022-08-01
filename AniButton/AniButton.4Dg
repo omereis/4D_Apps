@@ -1,0 +1,153 @@
+#platform "Gen4-uLCD-70DT"
+
+/****************************************************************************************
+*                                                                                       *
+*  4D Visi Sample                                                                       *
+*                                                                                       *
+*  Date:        2 July 2013                                                             *
+*                                                                                       *
+*  Description: An example of an AniButton. AniButtons are rather different to the      *
+*               normal 4D implementation of Buttons as they don't have a 'pressed'      *
+*               state. You could code them to operate when touched, although here we    *
+*               use the second image for the pressed state.                             *
+*                                                                                       *
+****************************************************************************************/
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+#inherit "AniButtonConst.inc"
+
+#constant  AB1Delay 100
+#constant  AB2Delay 100
+var AB1Dir, AB2Dir ;
+
+func ANITIMER1()
+    var i ;
+    i := img_GetWord(hndl, iAnibutton1, IMAGE_INDEX) ;
+    if (AB1Dir == DOWN) // Direction is down, increment frame
+        i++ ;
+    else
+        i-- ;
+    endif
+    img_SetWord(hndl, iAnibutton1, IMAGE_INDEX, i);
+    img_Show(hndl, iAnibutton1);
+
+    if (   (i != 0)
+        && (i != img_GetWord(hndl, iAnibutton1, IMAGE_FRAMES)-1) )
+        sys_SetTimer(TIMER1,AB1Delay) ;                             // Interval setting is only used by Genie, For ViSi you code it in your program
+    else
+        AB1Dir := -1 ;
+    endif
+ endfunc
+
+func ANITIMER2()
+    var i ;
+    i := img_GetWord(hndl, iAnibutton2, IMAGE_INDEX) ;
+    if (AB2Dir == DOWN) // direction is down, increment frame
+        i++ ;
+    else
+        i-- ;
+    endif
+    img_SetWord(hndl, iAnibutton2, IMAGE_INDEX, i);
+    img_Show(hndl, iAnibutton2);
+
+    if (i != 0)
+        if (i == img_GetWord(hndl, iAnibutton2, IMAGE_FRAMES)-1)    // momentary, as soon as it is down, start moving up
+            AB2Dir := UP ;
+        endif
+        sys_SetTimer(TIMER2,AB2Delay) ;                             // Interval setting is only used by Genie, For ViSi you code it in your program
+    else
+        AB2Dir := -1 ;
+    endif
+ endfunc
+
+func main()
+    var i, x, y, state, n ;
+//  var hstrings ; // Handle to access uSD strings, uncomment if required
+//  var hFontx ;   // Handle to access uSD fonts, uncomment if required and change n to font number
+//  Uncomment the following if uSD images, fonts or strings used.
+
+    putstr("Mounting...\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    gfx_TransparentColour(0x0020);
+    gfx_Transparency(ON);
+
+//  hFontn := file_LoadImageControl("ANIBUT~1.dan", "ANIBUT~1.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+//  hstrings := file_Open("ANIBUT~1.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+    hndl := file_LoadImageControl("ANIBUT~1.dat", "ANIBUT~1.gci", 1);
+
+    sys_SetTimerEvent(TIMER1,ANITIMER1);        // set timer routine
+    sys_SetTimerEvent(TIMER2,ANITIMER2);
+
+    // Anibutton1 1.0 generated 2/07/2013 4:56:37 PM
+    img_ClearAttributes(hndl, iAnibutton1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    img_Show(hndl, iAnibutton1);  // show button, only do this once
+    img_Show(hndl, iEllipse1);  // show button, only do this once
+
+    // Anibutton2 1.0 generated 2/07/2013 5:01:52 PM
+    img_ClearAttributes(hndl, iAnibutton2, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    img_Show(hndl, iAnibutton2);  // show button, only do this once
+    AB1Dir := -1 ;
+    AB2Dir := -1 ;
+
+    touch_Set(TOUCH_ENABLE);                            // enable the touch screen
+
+    repeat
+
+        state := touch_Get(TOUCH_STATUS);               // get touchscreen status
+        n := img_Touched(hndl,-1) ;
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_PRESSED)                          // if there's a press
+            x := touch_Get(TOUCH_GETX);
+            y := touch_Get(TOUCH_GETY);
+            if (n == iAnibutton1)
+                if (AB1Dir == -1)                           // if button not currently animating
+                    if (img_GetWord(hndl, iAnibutton1, IMAGE_INDEX) == 0)   // Determine direction
+                        AB1Dir := DOWN ;
+                        img_SetWord(hndl, iAnibutton1, IMAGE_INDEX, 1);
+                    else
+                        AB1Dir := UP ;
+                        img_SetWord(hndl, iAnibutton1, IMAGE_INDEX, img_GetWord(hndl, iAnibutton1, IMAGE_FRAMES)-2) ;
+                    endif
+                    img_Show(hndl,iAnibutton1) ;
+                endif
+            endif
+            if (n == iAnibutton2)
+                if (AB1Dir == -1)                                   // if button not currently animating
+                    img_SetWord(hndl, iAnibutton2, IMAGE_INDEX, 1);
+                    img_Show(hndl,iAnibutton2) ;
+                    AB2Dir := DOWN ;
+                endif
+            endif
+
+        endif
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_RELEASED)                      // if there's a release
+            if (n == iAnibutton1)
+                if (AB1Dir != -1) sys_SetTimer(TIMER1,AB1Delay) ;             // Start animation, Object Interval setting is only used by Genie, For ViSi you code it in your program
+            endif
+            if (n == iAnibutton2)
+                if (AB2Dir != -1) sys_SetTimer(TIMER2,AB2Delay) ;             // Start animation, Object Interval setting is only used by Genie, For ViSi you code it in your program
+            endif
+        endif
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_MOVING)                       // if it's moving
+            x := touch_Get(TOUCH_GETX);
+            y := touch_Get(TOUCH_GETY);
+        endif
+
+    forever
+endfunc
+

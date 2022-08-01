@@ -1,0 +1,15 @@
+#platform "uLCD-32PTU"
+
+#MODE RUNFLASH
+
+func main()
+    txt_FontID(FONT2);
+    print("I am the main prog. in FLASH\n");
+    print("When I exit I will go to sleep\n");
+    txt_FGcolour(0xFFE0);
+    print("\nWhen i'm asleep,\n");
+    print("Touching screen for 2 secs\n");
+    print("Will wake me up again.....\n");
+    pause(5000);
+endfunc
+

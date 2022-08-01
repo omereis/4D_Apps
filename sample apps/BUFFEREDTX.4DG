@@ -1,0 +1,113 @@
+#platform "Gen4-uLCD-70DT"
+
+
+/*************************************************
+* Filename: bufferedTX.4dg
+* Created: 2010/05/23
+* Author:
+* Description: buffered TX service
+* Use Workshop terminal at 9600 baud to see result
+* Example of Buffered TX service vs Non buffered
+* Also explains the use of COMMS events
+*
+* NB Program must be written to flash so
+* the Workshop Terminal can be used.
+*
+**************************************************/
+
+
+var combuf[220];  // buffer for up to 440 bytes
+
+
+// run a timer event while we are doing comms
+func T7Service()
+   var private colour := 0xF800;
+   colour ^= 0xF800;
+   gfx_RectangleFilled(50,200,80,220,colour);
+   sys_SetTimer(TIMER7, 200);
+   print("This is an timer7 event\n");
+endfunc
+
+
+// event to capture the buffer empty event
+func bufEmpty()
+      com_TXbuffer(0, 0, PA0);                                         // done with the buffer, release it
+    print("\n\nHELLO WORLD, I'M EMPTY ",com_TXcount(),"\n");
+endfunc
+
+
+
+func main()
+    var n, r, D, fh;
+
+    sys_SetTimerEvent(TIMER7,T7Service);                    // run a timer event
+    sys_SetTimer(TIMER7, 150);
+    com_TXemptyEvent(bufEmpty);                             // set to capture the buffer empty event
+
+    setbaud(BAUD_9600);
+
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+repeat
+
+    gfx_Cls();
+
+
+
+
+    txt_MoveCursor(3,1);                        // reset cursor to line 3, column 2
+    print("Send 440 chars non-buffered\n");
+    pokeW(SYSTEM_TIMER_LO, 0);                  // reset timer
+
+    // note that 440 chars at 9600 baud takes approx 453msec
+    for(n:=0; n<10; n++)
+        to(COM0); putstr("The quick brown fox jumps over the lazy dog\n"); // 44 chars
+    next
+
+    print("took ",peekW(SYSTEM_TIMER_LO),"Msec\n\n");       // time spent blocking is only approx 1msec
+
+    com_TXbuffer(combuf, 440, PA0);                              // set up the TX buffer
+    com_TXbufferHold(ON);                                   // hold the TX buffer til ready
+
+    pause(40000);
+    // note that here the time is only approx 1msec overhead due to buffering.
+    print("Send 440 chars buffered\n");
+    pokeW(SYSTEM_TIMER_LO, 0);                              // reset timer
+
+    for(n:=0; n<10; n++)
+        to(COM0); putstr("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\n"); // 44 chars
+    next
+
+    print("took ",peekW(SYSTEM_TIMER_LO),"Msec\n\n");           // time spent blocking is only approx 1msec
+
+// demonstrate how to modify a prepared comms buffer that is still being held
+to(combuf); print("MY CONTENTS HAVE BEEN CHANGED");
+to(combuf+50); print("*** AND CHANGED HERE TOO ***");
+combuf[218] := 'AC';    // the last 'DOG' changed here
+combuf[219] := '\nT';    // the last 'DOG' changed here
+
+    // now we are ready to send to buffer
+    n := com_TXbufferHold(OFF);                                 // release TX buffer
+    print("TXBuffer is holding ", n, " chars\n");               // show how many characters were in the buffer
+
+    // watch the buffer empty
+    repeat
+        print("TX count = ", [DEC5ZB] n := com_TXcount(),"\r");  // whatch the count as the buffer empties
+    until(!n);
+
+    print("\n\nTX Empty");
+
+
+
+
+   com_TXbuffer(0, 0, PA0);                                         // done with the buffer, release it
+    sys_SetTimer(TIMER0, 3000);     // pause for 3 seconds, non blocking
+    while(peekW(TMR0));
+
+    com_TXbuffer(0, 0, PA0);                                         // done with the buffer, release it
+
+forever                         // do it forever
+
+endfunc
+
+

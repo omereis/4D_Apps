@@ -1,0 +1,34 @@
+#platform "uLCD-32PTU"
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "FONT4.FNT"
+#inherit "MS_SanSerif8x12.fnt"
+
+func main()
+txt_Width(2);
+txt_Height(2);
+txt_Xgap(5);
+txt_Ygap(15);
+txt_BGcolour(GRAY);
+print("HELLO\n");
+print("HELLO\n");
+
+//txt_Bold(ON);
+txt_FontID(FONT4);
+print("HELLOO\n");
+txt_Bold(ON);
+print("HELLOO\n");
+
+txt_Italic(ON);
+txt_Inverse(ON);
+txt_Bold(ON);
+txt_FontID(MS_SanSerif8x12);
+print("HELLO\n");
+
+repeat forever
+
+endfunc
+
+
+
+

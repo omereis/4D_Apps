@@ -1,0 +1,106 @@
+#platform "uLCD-32PTU"
+
+/*        4DGL Demo Application
+       -  Test for gfx_332to565();  -
+         -- PICASO Platform --
+*/
+
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "FONT4.fnt"
+#constant MAP_XPOS  10
+#constant MAP_YPOS  68
+#constant BLOCKSIZE 14
+
+
+//==================================================================================================
+func main()
+    var state, colour8, x, y, mx, my, bx, by;
+
+
+    txt_Set(TEXT_OPACITY, OPAQUE);                      // all solid chars
+    touch_Set(TOUCH_ENABLE);                            // enable the touch screen
+
+    // draw logo
+    txt_Set(FONT_SIZE, FONT4);
+    txt_MoveCursor(19,3);
+    txt_Set(TEXT_COLOUR, WHITE);
+    print("4D Systems ");
+    txt_Set(TEXT_COLOUR, RED);
+    print("4");
+    txt_Set(TEXT_COLOUR, CYAN);
+    print("D");
+    txt_Set(TEXT_COLOUR, YELLOW);
+    print("G");
+    txt_Set(TEXT_COLOUR, LIME);
+    print("L");
+
+
+    gfx_Set(PEN_SIZE, OUTLINE);
+    gfx_Rectangle(184, MAP_YPOS-25, 233, MAP_YPOS-5, WHITE);  // draw colour box outline
+    gfx_Set(PEN_SIZE, SOLID);
+
+
+
+    txt_Set(FONT_SIZE, FONT3);
+    txt_MoveCursor(1,0);
+    txt_Set(TEXT_COLOUR, WHITE);
+    print("256 colour chart\nproduced by gfx_332to565();");
+
+
+
+
+    mx := (BLOCKSIZE) * 16 + MAP_XPOS;
+    my := (BLOCKSIZE) * 16 + MAP_YPOS;
+    bx := BLOCKSIZE-2;
+    by := BLOCKSIZE-2;
+    y := MAP_YPOS;
+    while (y < my)
+        x := MAP_XPOS;
+        while (x < mx)
+            gfx_Rectangle(x, y, x+bx, y+by, gfx_332to565(colour8++));
+            x := x + BLOCKSIZE;
+        wend
+    y := y + BLOCKSIZE;
+    wend
+
+
+    // now just stay in a loop
+    colour8  := 0;
+    x := MAP_XPOS;        // start as black
+    y := MAP_YPOS;
+    repeat
+        if (x >= MAP_XPOS && x < MAP_XPOS + BLOCKSIZE * 16)
+            if (y >= MAP_YPOS && y < MAP_YPOS + BLOCKSIZE * 16)     // draw the colour matrix
+                x := (x - MAP_XPOS) / BLOCKSIZE;
+                y := (y - MAP_YPOS) / BLOCKSIZE;
+                colour8 := y << 4 + x;
+                gfx_Rectangle(185, MAP_YPOS-24, 232, MAP_YPOS-6, gfx_332to565(colour8));
+                txt_Set(FONT_SIZE, FONT4);
+                txt_Set(TEXT_COLOUR, WHITE);
+                txt_MoveCursor(3,0);
+                print("hex ",[HEX2] colour8, " dec ", [DEC] colour8);
+            endif
+        endif
+
+        repeat
+            state := touch_Get(TOUCH_STATUS);                       // get touchscreen status
+        until(state == TOUCH_PRESSED || state == TOUCH_MOVING);       // wait for a press
+
+        x := touch_Get(TOUCH_GETX);
+        y := touch_Get(TOUCH_GETY);
+
+    forever
+
+
+
+
+endfunc
+
+
+
+//==================================================================================================
+
+
+
+

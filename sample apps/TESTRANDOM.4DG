@@ -1,0 +1,54 @@
+#platform "uLCD-32PTU"
+
+/*       4DGL Demo Application
+    - Random Number Generator Test -
+         -- PICASO Platform --
+*/
+
+
+//==================================================================================================
+
+func main()
+    var n, x, y, x2, y2;
+
+    repeat
+        SEED(1234);
+        n := -32768;
+        while (n++<32767)
+            x := ABS(RAND());
+            y := ABS(RAND());
+            gfx_PutPixel(x%240 , y%320 , RAND());
+        wend
+
+        pause(250);
+
+        SEED(1234);
+        n := -32768;
+        while (n++<32767)
+            x := ABS(RAND());
+            y := ABS(RAND());
+            RAND();
+            gfx_PutPixel(x%240 , y%320 , 0);
+        wend
+
+        pause(2250);
+
+    forever
+
+endfunc
+
+//==================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+

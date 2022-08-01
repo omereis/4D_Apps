@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>4D Codebase | 4D-CD-00047</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link type="text/css" rel="stylesheet" href="css/styles.css"/>
+        <link type="text/css" rel="stylesheet" href="css/blueTable.css"/>
+        <link type="text/css" rel="stylesheet" href="css/redTable.css"/>
+        <link type="text/css" rel="stylesheet" href="css/tooltipCustom.css"/>
+        <link type="text/css" rel="stylesheet" href="css/fourDGLstyle.css"/>
+
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+
+
+        <script type="text/javascript" src="js/libs/jquery/jquery.js"></script>
+        <script type="text/javascript" src="js/libs/jquery/jquery.wave.js"></script>
+        <script type="text/javascript" src="js/libs/bootstrap/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/mySinewaves.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>        
+
+    </head>
+    <body>		
+        <div class="header">
+            <div class="container">
+                <h2 class="header-heading">ViSi Displaying a Sine Wave using the Scope Widget</h2>                
+            </div>
+        </div>             
+
+        <div class="customBar">
+            <div class="container">            
+                <h4 style="margin: 0;">4D Systems Codebase Example</h4>
+            </div>
+        </div>
+
+        <div class="nav-bar">
+            <div class="container">
+                <ul class="nav">
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li><a href="#theScopeWidget">The Scope Widget</a></li>
+                    <li><a href="#theSineWave">The Sine Wave</a></li>
+                    <li><a href="#projectFiles">Project File(s)</a></li>
+                    <li><a href="#instructions">Instructions</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="container">
+                <div class="main">
+                    <a name="introduction"></a>
+                    <h1>Introduction</h1>
+                    <hr>
+
+                    <p>This codebase example shows how the scope widget is used to plot a sinusoidal waveform on the 
+                        display. Shown below is a simple simulation of the project output on a uLCD-32PTU (a Picaso 
+                        display module). Click on the play button to start the simulation.
+                    </p>
+
+                    <div class="simulationPanels" style="border: none; margin-bottom: 5em;">
+                        <div class="canvasContainers" style="border: none; background-color: transparent;">
+                            <div class="canvasses" id="canvas1Border" style="width: 464px; height: 288px; ">                                
+                                <canvas id="canvas1" width="250" height="150" style="margin: 5px auto; 
+                                        background-color: transparent; position: relative; top: 73px; 
+                                        left:99px; /*border: 1px solid yellow;*/" ></canvas>
+                            </div>
+                        </div>
+                        <div class="simButtonContainers" style=" border: none; background-color: transparent;" >
+                            <div class="simulationButtons" id="playButton1" style="max-width: 464px;  background-color: green;">
+                                <div id="playButton1Text" style="text-align: center; font-size: 1.5em; color: white; "><!--Play dynamic content--></div>                                
+                            </div>    
+                            <div class="simulationButtons" id="dirButton1" style="max-width: 464px;  background-color: #006699;">
+                                <div id="dirButton1Text" style="text-align: center; font-size: 1.5em; color: white; "><!--Right to left dynamic content--></div>                                
+                            </div>   
+                        </div>
+                    </div>
+
+                    <p style="clear: left;"></p>
+
+
+                    <a name="theScopeWidget"></a>
+                    <h1>The Scope Widget</h1>
+                    <hr>
+                    <p>Below are some of the properties of the scope widget used for this demo.</p>
+
+                    <div style="margin-bottom: 3em;">
+                        <div class="redTable" style="margin: auto; max-width: 50%;" >
+                            <table >
+                                <tr>
+                                    <td>Property</td>
+                                    <td>Value</td>                  
+                                </tr>
+                                <tr>
+                                    <td>Left</td>
+                                    <td>40 pixels</td>                     
+                                </tr>
+                                <tr>
+                                    <td>Top</td>
+                                    <td>52 pixels</td>                     
+                                </tr>
+
+                                <tr>
+                                    <td>Height</td>
+                                    <td>150 pixels</td>                     
+                                </tr>
+
+                                <tr>
+                                    <td>Width</td>
+                                    <td>250 pixels</td>                     
+                                </tr>
+
+                                <tr>
+                                    <td>Yoffset</td>
+                                    <td>75 pixels</td>                     
+                                </tr>
+
+                                <tr>
+                                    <td>Yamp</td>
+                                    <td>50 pixels</td>                     
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <p></p>
+
+                    <div style="margin-bottom: 2em;">
+                        <div style="width: 95%; margin: auto;">
+                            <img class="img-responsive" src="images/scopeWidgetAnatomy.png" alt="anatomy of a scope widget">
+                        </div>
+                    </div>
+
+                    <p style="margin-bottom: 3em;">
+                        The scope widget has a <strong>height</strong> of 150 pixels and a 
+                        <strong>y offset </strong>value of 75 pixels. 
+                        The y offset, measured from the bottom of the scope widget area, defines the line at which zero
+                        y values will be displayed. The scope above can therefore display y values between -75 and +75, 
+                        with zero y values rendered at the line y = 75 pixels from the bottom.
+                    </p>
+
+                    <h3>The Scope Function</h3>
+                    <p style="margin-bottom: 2em;">
+                        The drive the scope widget, we use the 4DGL graphics function                         
+                        <span class="FourDGLfunction">gfx_Scope</span><span class="FourDGLdel">(</span><span class="FourDGLnum">...</span><span class="FourDGLdel">)</span>
+                        . This function is native to the Diablo16 processor but not to the Picaso processor. 
+                        To be able to use this function for a Picaso display program, we need to include the file
+                        <span class="FourDGLstring">scope4.inc</span>
+                        in the source code, like as shown below.                        
+                    </p>
+
+                    <div style="margin-bottom: 3em; background-color: black;">
+                        <p style=" margin-left: 2em; ">                            
+                            <span class="FourDGLdel">#</span>
+                            <span class="FourDGLfunction">inherit</span>
+                            <span class="FourDGLstring">"scope4.inc"</span>
+
+                        </p>
+                    </div>
+
+                    <p>The gfx_Scope(...) function is documented in <strong>section 2.6.61</strong> of the Diablo16 
+                        <a href="http://www.4dsystems.com.au/product/4D_Workshop_4_IDE/downloads"
+                           target="_blank">Internal Functions manuals</a>.
+                        The description for this function in the Diablo16 manual applies to the
+                        Picaso processor as well. See the manual for more information.
+                    </p>
+                    <div style="margin-bottom: 3em; background-color: black;">
+                        <p style=" margin: auto 2em; text-align: left;">
+                            <span class="FourDGLfunction">gfx_Scope</span><span class="FourDGLdel">(</span>
+                            <span class="FourDGLvar">left, width, Yzero, N, Xstep, Yamp, colourbg, old_y1, new_y1, 
+                                colour1, old_y2, new_y2, colour2, old_y3, new_y3, colour3, old_y4, new_y4, colour4</span>
+                            <span class="FourDGLdel">)</span>   
+                            <span class="FourDGLdel">;</span>
+                        </p>
+                    </div>
+                    <p style="margin-bottom: 5em;">Take note of the arguments <strong>Yamp, old_y1, new_y1, old_y2, new_y2, 
+                            old_y3, new_y3, old_y4, and new_y4</strong>. The scope widget is capable of plotting four
+                        traces or waveforms at a time. The values for each trace will be taken from its corresponding array.
+                        Note further that each trace has two arrays - an array for its old values and another for its
+                        new values. This example uses only one trace to plot the sinusoidal waveform. The Yamp argument is 
+                        the amplification factor (100 is unity). This is copied from the 
+                        object inspector when the Paste Code button is pressed. </p>                
+
+                    <a name="theSineWave"></a>
+                    <h1>The Sine Wave</h1>
+                    <hr>
+                    <p>To generate the sinusoidal waveform, we use the 4DGL mathematical function 
+                        <span class="FourDGLfunction">SIN</span><span class="FourDGLdel">(</span><span class="FourDGLnum">angle</span><span class="FourDGLdel">)</span>
+                        . This function is documented in the Picaso and Diablo16 
+                        <a href="http://www.4dsystems.com.au/product/4D_Workshop_4_IDE/downloads"
+                           target="_blank">Internal Functions manuals </a>
+                        (choose according to your display module's processor).
+                    </p>
+                    <div style="margin-bottom: 3em; background-color: black;">
+                        <p style="width: 50%; margin: auto; text-align: center;">
+                            <span class="FourDGLvar">y</span>
+                            <span class="FourDGLdel">:=</span>
+                            <span class="FourDGLfunction">SIN</span><span class="FourDGLdel">(</span>
+                            <span class="FourDGLnum">angle</span>
+                            <span class="FourDGLdel">)</span>   
+                            <span class="FourDGLdel">;</span>
+                        </p>
+                    </div>
+                    <p><strong>Section 2.3.5</strong> of the manuals says:</p>                    
+                    <blockquote>
+                        <p><strong>argument:</strong> angle</p>    
+                        <p>The angle in degrees. (Note: The input value is automatically shifted to lie within 
+                            0-359 degrees.)
+                        </p>
+                    </blockquote>
+
+                    <blockquote>
+                        <p><strong>return value:</strong> result</p>     
+                        <p>The sine in radians of an argument specified in degrees. The returned value
+                            range is from 127 to -127 which is a more useful representation for graphics
+                            work. The real sine values vary from 1.0 to -1.0 so appropriate scaling must be
+                            done in user code as required.
+                        </p>
+                    </blockquote>
+
+                    <p>Below is a plot of a sinusoidal waveform whose maximum and minimum amplitudes are 127 and
+                        -127 units, respectively. The peak-to-peak amplitude is 254 units. The waveform is plotted
+                        for a duration of 320 units.</p>
+
+                    <div style="margin-bottom: 2em;">
+                        <div style="width: 70%; margin: auto;">
+                            <!--div style="margin: auto;"-->
+                            <img class="img-responsive" src="images/oscilloscopeSinewave.png" alt="sinewave">
+                            <!--/div-->
+                        </div>
+                    </div>                   
+
+                    <p>The waveform above won't fit into the scope widget nor the whole display area. Shown below
+                        are the dimensions of the active area of the uLCD-32PTU display (320 pixels by 240 pixels)
+                        and the dimensions of the scope widget (250 pixels by 150 pixels).</p>
+
+                    <div style="margin-bottom: 2em;">
+                        <div style="width: 80%; margin: auto;">
+                            <!--div style="margin: auto;"-->
+                            <img class="img-responsive" src="images/displayScopeMeasurement.png" alt="sinewave">
+                            <!--/div-->
+                        </div>
+                    </div>                   
+
+                    <p>To be able to display the sinusoidal waveform on the scope widget properly, we do the following.</p>
+                    <ol style="margin-bottom: 2em;">
+                        <li>Limit the duration of the waveform to <strong>250</strong> units or pixels</li>
+                        <li>Limit maximum and minimum amplitudes of the waveform to 
+                            <strong>63 and -63 </strong>units or pixels, respectively.</li>
+                    </ol> 
+
+                    <p>Shown in the image blow are the original waveform (left) and the new version (right)
+                        with which we are interested. The new smaller waveform will easily fit into the scope widget.</p>
+
+                    <div style="margin-bottom: 2em;">
+                        <div style="width: 95%; margin: auto;">
+                            <!--div style="margin: auto;"-->
+                            <img class="img-responsive" src="images/twoSines.png" alt="compare two sinewaves">
+                            <!--/div-->
+                        </div>
+                    </div>   
+
+                    <p>To implement item #1 above in the source code, we make use of arrays whose size is 250.</p>
+
+                    <div style="margin-bottom: 3em; background-color: black;">
+                        <p style="margin: auto 2em; text-align: left;">
+                            <span class="FourDGLfunction">var </span>
+                            <span class="FourDGLvar">new_y1</span>
+                            <span class="FourDGLdel">[</span>
+                            <span class="FourDGLnum">250</span>
+                            <span class="FourDGLdel">], </span>
+                            <span class="FourDGLvar">old_y1</span>
+                            <span class="FourDGLdel">[</span>
+                            <span class="FourDGLnum">250</span>
+                            <span class="FourDGLdel">];</span>
+                        </p>
+                    </div>
+
+                    <p>We fill up the array <strong>new_y1 </strong> with the values of a sine wave.</p>
+                    <div style="margin-bottom: 3em; background-color: black;">
+                        <p style="margin: auto 2em; text-align: left;">
+                            <span class="FourDGLvar">new_y1</span>
+                            <span class="FourDGLdel">[</span>
+                            <span class="FourDGLvar">i</span>
+                            <span class="FourDGLdel">] := </span>
+                            <span class="FourDGLfunction">SIN</span><span class="FourDGLdel">(</span>
+                            <span class="FourDGLvar">i</span>
+                            <span class="FourDGLdel">)</span>   
+                            <span class="FourDGLdel">;</span>
+                        </p>
+                    </div>
+
+                    <p>We then pass the address of <strong>new_y1</strong> and <strong>old_y1</strong> as parameters 
+                        to <strong>gfx_Scope(...)</strong>.</p>
+                    <div style="margin-bottom: 3em; background-color: black;">
+                        <p style=" margin: auto 2em; text-align: left;">
+                            <span class="FourDGLfunction">gfx_Scope</span><span class="FourDGLdel">(</span>
+                            <span class="FourDGLvar">...old_y1, new_y1...</span>
+                            <span class="FourDGLdel">)</span>   
+                            <span class="FourDGLdel">;</span>
+                        </p>
+                    </div>
+
+                    <p>Since the <strong>Yamp</strong> value of the scope widget is 50, all values 
+                        taken from the array will be automatically scaled down by 50% before they are plotted. Hence, item #2 
+                        above. </p>
+
+                    <p style="margin-bottom: 5em;">The program essentially alternates between updating the values of the array
+                        using the <strong>SIN()</strong> function and displaying the values of the array using the 
+                        <strong>gfx_Scope(...)</strong> function.</p>
+
+                    <a name="projectFiles"></a>
+                    <h1>Project File(s)</h1>
+                    <hr>
+                    <p>The function <strong>gfx_Scope(...)</strong> is internal to the Diablo16 processor, but not to the Picaso processor. 
+                        As a consequence, each of the project files has a Diablo16 version and a Picaso version. Choose 
+                        accordingly among the attached files. The project file(s) for a codebase example is/are usually inside
+                        the folder "<strong>Project Files</strong>".
+                    </p>
+                    <div style="margin-bottom: 3em; overflow: auto;">
+                        <div class="redTable" style="margin: 0 auto 2em; border: 1px black solid;" >
+                            <table>
+                                <tr>
+                                    <td> </td>
+                                    <td>Left to Right</td>
+                                    <td>Right to Left</td>
+                                </tr>
+                                <tr>
+                                    <td>Picaso</td>
+                                    <td>sineWave_R_1_0<span style="color:blue; font-weight: bold;">P</span>lr.zip</td>
+                                    <td>sineWave_R_1_0<span style="color:blue; font-weight: bold;">P</span>rl.zip</td>
+
+                                </tr>
+                                <tr>
+                                    <td>Diablo16</td>
+                                    <td>sineWave_R_1_0<span style="color:red; font-weight: bold;">D</span>lr.zip</td>
+                                    <td>sineWave_R_1_0<span style="color:red; font-weight: bold;">D</span>rl.zip</td>                                
+                                </tr>
+
+
+                            </table>
+                        </div>
+                    </div>
+                    <a name="instructions"></a>
+                    <h1>Instructions</h1>
+                    <hr>
+                    <p>Follow these instructions to run the example.</p>
+                    <ol style="margin-bottom: 2em;">
+                        <li>Unzip the content/s of the selected zip file. The zip file contains the Workshop project file/s.</li>
+                        <li>Open the project file in Workshop.</li>
+                        <li>Compile the project source code and download or upload the program to the target 
+                            display module (a uLCD-32PTU in this codebase example).</li>
+                    </ol> 
+
+                    <p>The application should now run. If not familiar with the details of the steps above, see the application note 
+                        <a href="http://www.4dsystems.com.au/appnote/4D-AN-00119/" target="_blank">ViSi Getting Started - First 
+                            Project for Picaso and Diablo16</a>.
+                        Note that this codebase example does not require a uSD card.</p>
+
+                    <hr>                                       
+                </div>
+                <div class="aside">
+                    <div id="remedyo1">
+                        <div id="slidePanelMessage1">   
+                            <!--dynamic content-->
+                        </div>
+                    </div>
+                    <div id="panel">
+                        <div class="blueTable" >
+                            <table >
+                                <tr>
+                                    <td>Property</td>
+                                    <td>Details</td>                  
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="withToolTip" data-toggle="tooltip" 
+                                              data-placement="bottom" 
+                                              title="Codebase examples are numbered using the format 
+                                              '4D-CD-XXXXX'.">Number
+                                        </span>
+                                    </td>
+                                    <td>4D-CD-00047</td>                     
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="withToolTip" data-toggle="tooltip" 
+                                              data-placement="bottom" 
+                                              title="Remember to always check for the latest 
+                                              revision!">Revision
+                                        </span>
+                                    </td>
+                                    <td>1.0</td>                              
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="withToolTip" data-toggle="tooltip" 
+                                              data-placement="bottom" 
+                                              title="Examples usually come from 4D Staff members, but
+                                              soon you can also upload and share your projects as well!">Author
+                                        </span>
+                                    </td>
+                                    <td>4D Systems</td>                    
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="withToolTip" data-toggle="tooltip" 
+                                              data-placement="bottom" 
+                                              title="The difficulty of an example can be 'easy', 'medium',
+                                              or 'hard', depending on the number of pre-requisite 
+                                              codebase examples it requires.">
+                                            Difficulty
+                                        </span>
+                                    </td>
+                                    <td>Easy</td>                 
+                                </tr>
+                                <tr>                                    
+                                    <td>
+                                        <span class="withToolTip" data-toggle="tooltip"                                                 
+                                              data-placement="bottom" 
+                                              title="The 4D product(s) on which this example was tested. 
+                                              The user should be able to successfully run this example on other 
+                                              products specified in 'Relevant 4D Product/s'.">
+                                            Tested on a
+                                        </span>
+                                    </td>  
+                                    <td>
+                                        <a href="http://www.4dsystems.com.au/product/uLCD_32PTU/"
+                                           target="_blank">
+                                            uLCD-32PTU</a>
+                                    </td>
+                                </tr>
+                                <tr>                                    
+                                    <td>
+                                        <a class="withToolTip" data-toggle="tooltip" 
+                                           href="http://www.4dsystems.com.au/products"
+                                           target="_blank"
+                                           data-placement="bottom" 
+                                           title="Product(s) to which this example is applicable.">
+                                            Relevant 4D Product/s
+                                        </a>
+                                    </td>  
+                                    <td>All Picaso and Diablo16 displays</td>                 
+                                </tr>
+                                <tr>                                
+                                    <td>
+                                        <a class="withToolTip" data-toggle="tooltip" 
+                                           href="http://www.4dsystems.com.au/product/4D_Workshop_4_IDE/"
+                                           target="_blank"
+                                           data-placement="bottom" 
+                                           title="The Workshop 4 environment(s) in which this example
+                                           was designed or to which it is applicable. Workshop 4 has
+                                           four environments - ViSi-Genie, ViSi, Designer, and Serial.">
+                                            Workshop 4 Environment
+                                        </a>
+                                    </td>  
+                                    <td>ViSi</td>                 
+                                </tr>
+                                <tr>                                    
+                                    <td>
+                                        <a class="withToolTip" data-toggle="tooltip" 
+                                           href="http://forum.4dsystems.com.au/forum/codebase-code-demos-and-examples/staff-codebase-code-examples-to-help-or-inspire"
+                                           target="_blank"
+                                           data-placement="bottom" 
+                                           title="Pre-requisite codebase example(s) that the user is advised
+                                           to study first before reading this example.">
+                                            Recommended Codebase Examples
+                                        </a>
+                                    </td> 
+                                    <td>NA</td>                 
+                                </tr>
+                                <tr>                                   
+                                    <td>
+                                        <a class="withToolTip"                                                 
+                                           href="http://www.4dsystems.com.au/appnotes"
+                                           target="_blank"
+                                           data-toggle="tooltip" 
+                                           data-placement="bottom" 
+                                           title="Application note(s) that may help the user understand
+                                           the example more easily. Application notes have a document 
+                                           that contains more detailed discussions.">
+                                            Relevant Application Notes
+                                        </a>
+                                    </td> 
+                                    <td>NA</td>                 
+                                </tr>                                
+                                <tr>                                    
+                                    <td>
+                                        <a class="withToolTip" 
+                                           href="http://forum.4dsystems.com.au/forum/customer-projects-formally-anna-s-sandbox/staff-project-share-projects-to-help-or-inspire"
+                                           target="_blank"
+                                           data-toggle="tooltip" 
+                                           data-placement="bottom" 
+                                           title="Project(s) to which this example is relevant. 
+                                           Projects are usually application-specific.">
+                                            Relevant Projects
+                                        </a>
+                                    </td> 
+                                    <td>NA</td>                 
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <span class="withToolTip" data-toggle="tooltip" 
+                                              data-placement="bottom" 
+                                              title="The Workshop 4 IDE comes with a lot of working examples. Go to the File menu
+                                              and select 'Samples'.">
+                                            Relevant Workshop 4 IDE Examples
+                                        </span>
+                                    </td>                                    
+                                    <td>
+                                        Diablo Designer\ Scope.4dg, Scope2.4dg
+                                        <br/>
+                                        <br/>
+                                        Picaso ViSi\ Scope.4dViSi
+                                    </td>      
+                                </tr>
+
+
+                            </table>
+                        </div>
+                    </div>
+                    <div id="slide">
+                        <div class="btn-slide">
+                            <span id="slidePanelMessage2"><!--dynamic content--></span>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="container">
+                Copyright &copy; 2015 4D Systems. All rights reserved. 
+                All trade and/or services marks mentioned are the property of their respective owners.
+            </div>
+        </div>
+    </body>
+</html>

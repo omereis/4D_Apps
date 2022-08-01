@@ -1,0 +1,220 @@
+#platform "uLCD-32PTU"
+
+/*************************************************
+* Filename: TERMINAL.4dg
+* Created: 2008/10/03
+* Author:
+* Description: Further serial testing
+* and scrolling example. Text colour changes
+* depending on buffer level.
+*
+* NB Program must be written to file
+* the Workshop debug window can be used
+* but must be opened first.
+*
+**************************************************/
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "FONT4.fnt"
+
+#MODE RUNFLASH  // compiled to run from FLASH
+
+
+
+var combuf[100];
+
+
+#constant TEXTBUFSIZE 128        // 16 columns, 8 rows for terminal display
+var charbuf[TEXTBUFSIZE];     // low byte char
+var colrbuf[TEXTBUFSIZE];     // character colours
+
+var row, col;
+
+
+#constant COLUMNS 16
+#constant ROWS 8
+
+#constant XORG 1
+#constant YORG 10
+
+//===========================================================
+// update the screen from the character and colour array
+// starting from
+//===========================================================
+func RedrawTextWindow(var row, var col)
+    var tmp;
+    txt_MoveCursor(row, col);
+    tmp := 0;
+    while(tmp < ROWS*COLUMNS)
+        txt_Set( TEXT_COLOUR, colrbuf[tmp] );
+        putch( charbuf[tmp++] );
+        if (!(tmp%COLUMNS)) putch('\n');
+    wend
+endfunc
+
+//===========================================================
+// scroll the colour text box
+// if mode = 1, scroll textbox up
+// if mode = 0, scroll textbox down
+//===========================================================
+func ScrollTextWindow(var mode)
+    var n;
+    if (mode)
+        // scroll text UP
+        n := 0;
+        repeat
+            charbuf[n] := charbuf[n+COLUMNS];
+            colrbuf[n] := colrbuf[n+COLUMNS];
+        until (++n == (ROWS-1)*COLUMNS);
+        repeat
+            charbuf[n] := ' ';      // blank bottom line
+            colrbuf[n] := GREEN;    // with background colour
+        until (++n == ROWS*COLUMNS);
+    else
+        // scroll text DOWN
+        n := ROWS*COLUMNS;
+        while (n-- > COLUMNS)
+            charbuf[n+COLUMNS] := charbuf[n];
+            colrbuf[n+COLUMNS] := colrbuf[n];
+        wend
+        while (n--)
+            charbuf[n] := ' ';      // blank top line
+            colrbuf[n] := GREEN;    // with background colour
+        wend
+    endif
+    RedrawTextWindow(YORG, XORG);
+endfunc
+
+//===========================================================
+// send a coloured character to the terminal
+//===========================================================
+func Terminal(var ch, var colr)
+    var n, exit;
+
+    exit := 0;
+    txt_Set(TEXT_HIGHLIGHT , GRAY);
+    txt_MoveCursor(row+YORG, col+XORG);
+    txt_Set(TEXT_COLOUR, colr);
+    putch(ch);                              // place character at current cursor position
+
+    n := row*COLUMNS+col;
+    charbuf[n] := ch;
+    colrbuf[n] := colr;
+    if (++col == COLUMNS)
+        col := 0;
+        if (row < ROWS-1)
+            row++;
+        else
+            ScrollTextWindow(1);
+        endif
+    endif
+
+    txt_MoveCursor(row+YORG, col+XORG);    // place cursor at next position
+    txt_Set(TEXT_COLOUR, colr);
+    putch('-');
+endfunc
+
+
+//===========================================================
+func main()
+    var colr, f, n, ch, e, exit;
+
+
+    print("Terminal v0.0");
+    pause(1000);
+
+    touch_Set(TOUCH_ENABLE);
+
+repeat
+    exit := 0;
+    gfx_Cls();
+    print ("Press ESC to exit");
+    txt_Set(FONT_SIZE, FONT4);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    txt_Set(TEXT_HIGHLIGHT , GRAY);
+
+    //setbaud(BAUD_19200);
+    n := 0;
+    while(n<TEXTBUFSIZE)
+        charbuf[n++] := ' ';
+    wend
+    n := 0;
+    while(n<TEXTBUFSIZE)
+        colrbuf[n++] := BLACK;
+    wend
+
+    //gfx_Button( 1, 10, y1, btnBtnColor, btnTextColor, font, 1, 1, buttontexts[n] );
+
+    RedrawTextWindow(YORG, XORG);
+
+    com_Init(combuf, 20, 0 );       // set up a comms ring buffer, maximum 12 characters before overflow
+
+    txt_Set(TEXT_COLOUR, YELLOW);
+    print ("\nReady\n");
+
+    row := 0;
+    col := 0;
+
+    n := 0;
+    while(!exit)
+
+        if (touch_Get(TOUCH_STATUS == TOUCH_PRESSED)) exit := 1;    // exit if touch hit
+
+        pause(100);                         // slow things down so its easy to over-run the buffer
+
+        txt_MoveCursor(3,0);
+
+        txt_Set(TEXT_COLOUR, GREEN);
+        txt_Set(TEXT_HIGHLIGHT , BLACK);
+        n := com_Count();
+        f := com_Full();
+        e := com_Error();
+        print("\ncom_Count = ",[DEC2Z] n);      // show how many chars in buffer
+        print("\ncom_Full = ",f);               // show buffer flag
+        print("\ncom_Error = ",e);               // show buffer flag
+
+        // change character colour depending on how critical buffer is
+        colr :=BLUE;
+        if (n > 4) colr := YELLOW;
+        if (n > 8) colr := RED;
+        txt_Set(TEXT_COLOUR, colr);
+        txt_Set(TEXT_HIGHLIGHT , 3);
+
+        while ((ch := serin()) == -1);       // serin returns -1 if no char available
+        if (ch >= 0)
+            Terminal(ch, colr);
+        else
+            if (ch == -2)
+                colr := MAGENTA;
+                Terminal('?', colr);                     // print cyan ? if serial overun or framing error
+            endif
+        endif
+
+        if(ch == 27) exit:=1;        // ESC key to exit
+
+        //if (e || f) break;
+
+
+    wend
+
+until (exit);
+
+//while( touch_Get(TOUCH_STATUS != TOUCH_RELEASE));    // exit if touch hit
+
+com_Reset();        // must release the comms buffer and stop comms interrupts
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,157 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 08 7, 15, 8:13:01 AM
+    Author     : 4d-doff
+*/
+
+.blueTable {
+	margin:0px;padding:0px;
+	width:90%;
+	box-shadow: 10px 10px 5px #888888;
+	border:1px solid #000000;
+        margin-left: 0.5em;
+        margin-bottom: 1.5em;
+        margin-top: 0.75em;
+	
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+	
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+	
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+	
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}.blueTable table{
+    border-collapse: collapse;
+        border-spacing: 0;
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+}.blueTable tr:last-child td:last-child {
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+}
+.blueTable table tr:first-child td:first-child {
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}
+.blueTable table tr:first-child td:last-child {
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+}.blueTable tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+}.blueTable tr:hover td{
+	
+}
+.blueTable tr:nth-child(odd){ background-color:#d1e5f9; }
+.blueTable tr:nth-child(even)    { background-color:#ffffff; }.blueTable td{
+	vertical-align:middle;
+	
+	
+	border:1px solid #000000;
+	border-width:0px 1px 1px 0px;
+	text-align:left;
+	padding:7px;
+	font-size:14px;
+	font-family:Arial;
+	font-weight:normal;
+	color:#000000;
+}.blueTable tr:last-child td{
+	border-width:0px 1px 0px 0px;
+}.blueTable tr td:last-child{
+	border-width:0px 0px 1px 0px;
+}.blueTable tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+}
+.blueTable tr:first-child td{
+		background:-o-linear-gradient(bottom, #006699 5%, #006699 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #006699) );
+	background:-moz-linear-gradient( center top, #006699 5%, #006699 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#006699");	background: -o-linear-gradient(top,#006699,006699);
+
+	background-color:#006699;
+	border:0px solid #000000;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:14px;
+	font-family:Arial;
+	font-weight:bold;
+	color:#ffffff;
+}
+.blueTable tr:first-child:hover td{
+	background:-o-linear-gradient(bottom, #006699 5%, #006699 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #006699) );
+	background:-moz-linear-gradient( center top, #006699 5%, #006699 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#006699");	background: -o-linear-gradient(top,#006699,006699);
+
+	background-color:#006699;
+}
+.blueTable tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;        
+}
+.blueTable tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+}
+
+.blueTable td:first-child{
+	//border-width:0px 0px 1px 0px;      
+        font-weight: bold;
+        cursor: help;
+}
+
+.blueTable a
+{
+	//display: block;
+	//padding: .7em 1.25em;
+	color: black;
+	//text-decoration: none;
+	//border-bottom: 1px solid gray;
+        text-decoration: underline;
+}
+
+.blueTable a:link { color: black; }
+.blueTable a:visited { color: #006699; }
+
+.blueTable a:focus
+{
+	//color: black;
+	//background-color: white;
+        color: black;
+        //background-color: #FFE680;
+        //font-style: italic;
+}
+
+.blueTable a:hover
+{
+	//color: orangered;
+        //color: #ff6633;
+        //color: orange;
+	//background-color: yellow;
+        //font-style: italic;
+        text-decoration: underline;
+}
+
+.blueTable a:active
+{
+	//color: white;
+	//background-color: red;
+        //color: black;
+        //background-color: #ffff66;
+        color: black;
+	//background-color: white;
+        //font-style: italic;
+}

@@ -1,0 +1,20 @@
+#platform "uLCD-32PTU"
+
+//This example shows lookup8(...) used as a 'filter'
+//to only match certain values between -12000 and +12000.
+
+
+func main()
+
+    var n, v;
+    n := -12000; // we will count from -12000 to +12000
+    while(n <= 12000)
+
+        v := lookup8(n, "0123456789ABCDEF" ); // hex lookup
+        if(v) print([HEX1] v-1); // only print if we got a match in the table
+        n++;
+
+    wend
+repeat forever
+
+endfunc

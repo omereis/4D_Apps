@@ -1,0 +1,189 @@
+#platform "uLCD-32PTU"
+
+/*  4DGL Demo Application
+    - Pitch Changer -
+    -- PICASO Platform --
+
+*/
+
+
+
+//#MODE RUNFLASH // runs a little slower from FLASH
+
+
+// displays available memory and bouncing ball.
+// plays sounds when ball hits walls.
+// requires the following files:-
+
+// police.wav
+// laser.wav
+// ding.wav
+// chimes.wav
+// flush.wav
+
+var pitch;
+
+
+
+
+func main()
+
+    var n, pitch;
+
+
+    txt_Set(FONT_SIZE, FONT1);
+    putstr("Mounting...\n");
+    if (!file_Mount())
+        while(!file_Mount())
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    print("Drive mounted.\n");
+
+    print("\n\nWave files:-\n");
+    file_Dir("*.wav");
+
+    // just make sure we have all our dependencies
+    if(!file_Exists("flush.wav")) putstr("flush.wav not found\n");
+    if(!file_Exists("laser.wav")) putstr("laser.wav not found\n");
+    if(!file_Exists("police.wav")) putstr("police.wav not found\n");
+    if(!file_Exists("ding.wav")) putstr("ding.wav not found\n");
+    if(!file_Exists("chimes.wav")) putstr("chimes.wav not found\n");
+
+   //snd_Volume(20);
+    snd_Volume(100);
+    snd_BufSize(0);
+
+
+// magic number is 1.0594631
+#DATA
+    word NOTES
+    10000>>1,10594>>1,11224>>1,11892>>1,12599>>1,13384>>1,14142>>1,14983>>1,15874>>1,16818>>1,17818>>1,18877>>1,
+    10000,10594,11224,11892,12599,13384,14142,14983,15874,16818,17818,18877,
+    10000<<1,10594<<1,11224<<1,11892<<1,12599<<1,13384<<1,14142<<1,14983<<1,15874<<1,16818<<1,17818<<1,18877<<1,
+    10000<<2,10594<<2,11224<<2,11892<<2,12599<<2,13384<<2,14142<<2,14983<<2,15874<<2 //,16818<<2,17818<<2,18877<<2
+
+#END
+
+    print("\nding.wav\n");
+    for(n:=0; n<45; n++)
+        pitch := NOTES[n];
+        print([UDEC] pitch,"\r");
+        snd_Pitch(pitch);
+        file_PlayWAV("ding.wav");
+        while(snd_Playing());
+        //pause(500);
+    next
+
+    print("\nchimes.wav\n");
+    for(n:=0; n<36; n++)
+        pitch := NOTES[n];
+        print([UDEC] pitch,"\r");
+        snd_Pitch(pitch);
+        file_PlayWAV("chimes.wav");
+        while(snd_Playing());
+        //pause(500);
+     next
+
+    print("Done...");
+
+
+    pause(1000);
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

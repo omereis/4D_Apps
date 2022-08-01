@@ -1,0 +1,77 @@
+#platform "pixxiLCD-13P2CT-CLB"
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "ESP8266_4DGL_Flash.inc"
+
+// Contains the Wi-Fi network SSID and Password
+#inherit "ESP_WiFi_Network.inc"
+// Edit this file to match your Wi-Fi network
+// The changes will be used for all other examples
+
+func main()
+
+    gfx_ScreenMode(PORTRAIT);
+
+    ESP_Initialize(ESP_4DISCOVERY13);
+
+    WiFi_SetMode(WIFI_STATION);
+
+    print("Connecting to ", [STR]SSID);
+    WiFi_Begin(SSID, PASSWORD);
+    while(WiFi_Status() != WIFI_CONNECTED)
+        pause(500);
+        putch('.');
+    wend
+    putch('\n');
+    WiFi_PrintLocalIP(0);
+    putch('\n');
+
+    var lastTimeCheck;
+
+    NTP_Start("pool.ntp.org", 8, 1337); // Uses pool.ntp.org as NTP server using default port
+
+    gfx_Cls();
+    repeat
+
+        if (sys_T() - lastTimeCheck > 10000)
+            // Keep Network Time Synchronized
+
+            lastTimeCheck := sys_T();
+
+            Clock.hrs := NTP_GetHours();
+            Clock.min := NTP_GetMinutes();
+            Clock.sec := NTP_GetSeconds();
+
+            Clock.lastTimeAdjust := sys_T();
+        else
+
+        endif
+
+        gfx_MoveTo(0, 95);
+        print([DEC2Z]Clock.hrs, ":", [DEC2Z]Clock.min, ":", [DEC2Z]Clock.sec, "  \r\n");
+
+    forever
+
+endfunc
+
+func Clock()
+    var private hrs, min, sec;
+    var private lastTimeAdjust;
+
+    if (sys_T() - lastTimeAdjust >= 1000)
+        lastTimeAdjust := sys_T();
+        sec++;
+        if (sec == 60)
+            min++;
+            sec := 0;
+        endif
+        if (min == 60)
+            hrs++;
+            min := 0;
+        endif
+        if (hrs == 24)
+            hrs := 0;
+        endif
+    endif
+endfunc

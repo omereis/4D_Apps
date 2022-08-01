@@ -1,0 +1,73 @@
+#platform "uLCD-32PTU"
+
+#inherit "MS_SanSerif8x12.fnt"
+
+
+func main()
+var str,width,height,len,w,h,x1,y1,x2,y2;
+
+    gfx_Origin(30,30);
+
+    txt_FontID(MS_SanSerif8x12); // select this font
+    txt_Ygap(4);
+   // txt_Width(3);
+  //  txt_Height(2);
+
+    //txt_Opacity(TRANSPARENT);
+    //txt_BGcolour(0x0f0f);
+
+    str := "HELLO\nTHERE\nMATE......";          // note that this string spans 2 lines due
+// gfx_MoveTo(500,500);                                   // to the \n.
+//print([STR] str);
+ //gfx_MoveTo(50,100);                                   // to the \n.
+//print([STR] str);
+ //gfx_MoveTo(50,100);                                   // to the \n.
+//print([STR] str);
+//gfx_Cls();
+  //  width := strwidth(str);         // get the width of the string, this will
+    x1 := peekW(GFX_LEFT);
+    y1 := peekW(GFX_TOP);
+    x2 := peekW(GFX_RIGHT);
+    y2 := peekW(GFX_BOTTOM);
+    //    gfx_Rectangle(x1,y1,x2,y2,31);
+
+
+   // width := strwidth(str);         // get the width of the string, this will
+    width := strwidth(str);         // get the width of the string, this will
+                                    // also capture the height.
+
+    height := strheight();          // note, invoking strwidth also calcs height
+                                    // which we can now read.
+    // The string above spans 2 lines, strheight() will calculate height
+    // correctly for multiple lines.
+
+    gfx_MoveTo(50,100);                                   // to the \n.
+    print("\npixel width=",width);
+    print("\npixel height=",height);
+
+    gfx_Rectangle(-2,-2,width+2,height+2,31);
+    gfx_MoveTo(0,0);                                   // to the \n.
+    print([STR] str);
+
+
+    gfx_MoveTo(0,150);                                   // to the \n.
+    len := strlen(str);      // the strlen() function returns the number
+                             // of characters in a string.
+    print("\nLength=",len);  // NB:- the \n in "HELLO\nTHERE" is counted
+                             // as a character.
+    //gfx_MoveTo(0,50);
+
+
+    w := charwidth('I');         // get a characters width
+    h := charheight('W');        // and height
+
+    //txt_FontID(0);               // back to default font
+    print ("\n'I' is " ,w, " pixels wide"); // show width of a character
+                                            // 'W' in pixel units.
+    print ("\n'W' is " ,h, " pixels high"); // show height of a character
+                                        // 'W' in pixel units.
+    print("\n",x1,":",y1,":",x2,":",y2);
+
+ repeat forever
+endfunc
+

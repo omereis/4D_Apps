@@ -1,0 +1,100 @@
+#platform "uLCD-32PTU"
+
+// the DATA access bug has been fixed
+
+#DATA
+    word myfontb
+    //0xf0ff,0xf1ff,0xf2ff,0xf3ff,0xf4ff,0xf5ff,0xf6ff,0xf7ff,0xf8ff,0xf9ff,0xfaff,0xfbff,0xfcff,0xfdff,0xfeff,0xffff
+    string1, barney, gfx_Cls ,ddd,ccc,bbb,aaa, bert, bert, main, string2, 0x2222,0x3333,0x4444,0xffff,0x6666,0x7777,0x8888,0x9999,0xAAAA,0xBBBB,0xCCCC,0xDDDD,0xEEEE,0xFFFF,0x0000
+    //0x1111,0x2222,0x3333,0x4444,0xffff,0x6666,0x7777,0x8888,0x9999,0xAAAA,0xBBBB,0xCCCC,0xDDDD,0xEEEE,0xFFFF,0x0000
+
+    byte string2 "goodbye",0
+    byte string1 "world",0
+
+
+
+#END
+
+//func fred();
+
+//var fred;
+
+
+func fred2()
+
+    var x;
+    x:= 1234;
+
+endfunc
+
+
+var energy[100];
+var aaa,bbb,ccc,ddd,eee;
+
+#constant barney 0x9876
+/*
+func fred()
+
+    var x;
+    x:= 1234;
+
+endfunc
+*/
+
+
+
+func main()
+    var counter,temp1,temp2, temp3;
+    txt_Set(TEXT_OPACITY, OPAQUE);  // make text opaque
+
+
+    temp3 := myfontb[7];
+    temp3();
+
+
+    txt_MoveCursor(1,0);
+    print( [STR] myfontb[10]);
+
+    print(10);
+
+repeat
+    counter := 0;
+    while (counter < 16)
+        temp1 := (0+myfontb[counter]);   // Only returns 8 bits??? - BUG FIXED
+        //temp2 := (myfontb[counter]+0);     // returns 16 bits
+        //temp3 := myfontb[counter];   // Only returns 8 bits???  - BUG FIXED
+
+        txt_MoveCursor(3,0);
+        print (counter, "   :  ", [HEX4] temp1, "  \"",[CHR] temp1,"\"  \n");
+        //print (counter, "   :  ", [HEX4] temp2, "\n");
+        //print (counter, "   :  ", [HEX4] temp3, "\n");
+        counter++;
+        pause(1500);
+    wend
+forever
+
+endfunc
+
+// notice that functions can be forward referenced if referred to in a data statement (late bound)
+func fred()
+
+    var x;
+    x:= 1234;
+
+endfunc
+
+
+func bert()
+
+    var x;
+    x:= -1234;
+    print("hello");
+endfunc
+
+
+
+
+
+
+
+

@@ -1,0 +1,208 @@
+#platform "uLCD-32PTU"
+
+/*  4DGL Demo Application
+     - Early testing, now is
+     - just some useful bits -
+     - and pieces -
+    -- PICASO Platform --
+*/
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "FONT4.fnt"
+
+#constant MYSTRING "hello world"        // type = string
+
+#constant mysubstitute 'GO'     // 2 character constant
+
+//#constant myfoo GREEN           // alias
+
+#constant drawmybox  $gfx_rectangle(10,10,20,20,0xFF00);    // $ for complete substitution
+
+
+var server[4];      // vector table for round robin server
+
+var buffer[100];
+
+var string[20];
+var mylist[10];
+var colours[3];
+
+
+// server functions
+func foo(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("FOO EXECUTED");
+endfunc
+
+func baa(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("BAA EXECUTED");
+endfunc
+
+func func1(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("func1 EXECUTED");
+endfunc
+
+func func2(var s, var y)
+    txt_MoveCursor(y,1);
+    putstr(s);
+    txt_MoveCursor(y+1,1);
+    putstr("func2 EXECUTED");
+endfunc
+
+
+func main()
+    var n;
+
+    colours[0] := RED;
+    colours[1] := YELLOW;
+    colours[2] := ORANGE;
+
+
+
+    n := foo;
+
+    n("foo isgood, ", 15);        // you can execute foo like this
+
+    server[0] := foo;
+    server[1] := baa;
+    server[2] := func1;      //  function vectors
+    server[3] := func2;
+
+    //n=2;
+    //server[n]("wow mate",n*2+5);      // execute all the functions
+
+    n := 3;
+    repeat
+        server[n]("wow mate",n*2+5);      // execute all the functions
+    until (!n--);
+
+    //until (n<0);
+
+
+
+    string[0] := mysubstitute;
+    string[1] := 'OD';
+    string[2] := ' D';
+    string[3] := 'AY';
+    string[4] := 0;
+
+    txt_MoveCursor(1,5), gfx_Set(OBJECT_COLOUR, 0xFF00), putstr(string);     // prints "GOOD DAY"
+
+
+    mylist[0] := "the quick";
+    mylist[1] := "brown fox";
+    mylist[2] := "jumps";
+    mylist[3] := "over the";
+    mylist[4] := "lazy brown dog mate";
+
+    txt_Set(TEXT_COLOUR, YELLOW);
+    n := 5;
+    while (n--)
+        txt_MoveCursor(n+3,3);    // print in reverse order and
+        putstr(mylist[n]);  // list in reverse order
+    wend
+
+    //setColour(0x00FF);
+
+    txt_MoveCursor(12,5);
+    putstr(MYSTRING);
+
+
+    gfx_RectangleFilled(10,10,20,20,0xFF00);
+    gfx_Rectangle(180,10,190,20,0x0F80);
+
+    gfx_CircleFilled(200,40,20,0xFF00);
+    gfx_Circle(200,80,30,0xF00F);
+
+    gfx_EllipseFilled(200,140,5,20,0xFFF0);
+    gfx_Ellipse(200,220,20,40, 0x0FFF);
+
+
+    gfx_Set(OBJECT_COLOUR, 0x8888);
+    txt_MoveCursor(15,5);
+
+
+    to(GFX);  // so set it text mode
+
+
+    n:=0;
+
+    txt_Set(TEXT_OPACITY, OPAQUE);
+    txt_Set(TEXT_HIGHLIGHT, BROWN);
+    repeat
+        txt_Set(TEXT_HEIGHT,  3);
+        gfx_MoveTo(20+n, 260+n);
+        txt_Set(TEXT_COLOUR, colours[n]);
+        to(GFX), putstr(" GRAPHICS MODE ");
+        txt_Set(TEXT_OPACITY, TRANSPARENT);
+    until(n++ >2);
+
+    txt_Set(FONT_SIZE, FONT4);
+    to(buffer), putstr("hello");
+
+
+    txt_MoveCursor(3, 1);
+    putstr(buffer);
+
+
+
+    to(buffer);
+    putstr("Im Buffered!!!"); // strings are already terminated
+
+// NB after the putstr to the buffer, iostream automatically returned to -2, graphics mode
+    to(TEXT);  // so set it text mode
+
+    txt_Set(TEXT_COLOUR, PURPLE);
+    txt_MoveCursor(14, 2);
+    putstr(buffer);
+
+repeat forever
+
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

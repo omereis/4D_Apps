@@ -1,0 +1,65 @@
+#platform "uLCD-32PTU"
+
+/////////////////////
+// DATA STATEMENT  //
+/////////////////////
+
+#DATA
+    word myData
+    myString1, Bert, Fred, main, myString2, baud, barney, 0x1111,0x2222,0x3333,0x4444
+
+    byte myString1 "Data String OK\n\n",0
+    byte myString2 "\"(and forward referenced!)\"\n\n",0
+    word baud 150,300,600,1200,2400,9600
+#END
+
+// this constant is a forward reference
+#constant barney 9876
+
+
+func Fred(var str)
+    print("string = ", [STR] str);
+endfunc
+
+func Bert(var p1, var p2, var p3)
+    print("hello from Bert\np1=",p1,"\np2=",p2, "\np3=",p3,"\n");
+    return "Bert was here\n";
+endfunc
+
+
+func main()
+
+    var fn;                     // a variable for a handle for the function
+
+    txt_Set(FONT_SIZE, FONT1);
+
+    fn := myData[1];                    // get a function pointer from the data statement index
+    print( [STR] fn(100,200,300) );     // use it in a statement to prove engine ok
+
+    fn := myData[2];                    // get a function pointer from the data statement index
+    fn("ABC\n");                          // execute the function
+
+    // just shows where main lives
+    print("\naddress of main = code[", myData[3],"]\n\n");      // remember - a var can be a handle, variable, pointer or vector
+    print( [STR] myData[0]);   // pointer table data reference
+    print( [STR] myData[4]);
+
+
+    repeat forever
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

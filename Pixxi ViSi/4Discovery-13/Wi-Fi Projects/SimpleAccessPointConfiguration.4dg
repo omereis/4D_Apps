@@ -1,0 +1,54 @@
+#platform "pixxiLCD-13P2CT-CLB"
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "ESP8266_4DGL_Flash.inc"
+
+var ssid[10];
+var password[10];
+
+func main()
+
+    gfx_ScreenMode(PORTRAIT);
+
+    while(!(file_Mount()))
+        putstr("Drive not mounted...");
+        pause(200);
+        gfx_Cls();
+        pause(200);
+    wend
+
+    ESP_Initialize(ESP_4DISCOVERY13);
+    WiFi_SetMode(WIFI_STATION);
+
+    gfx_MoveTo(0, 95);
+    
+    // Create a text file named "wifi.cfg" in the uSD
+    // Type the SSID name of your network in the first line
+    // and the password in the second line
+    
+    if (file_Exists("wifi.cfg"))
+        var cfg;
+        cfg := file_Open("wifi.cfg", 'r');
+        file_GetS(ssid, 19, cfg);       // first line should be SSID
+        file_GetS(password, 19, cfg);   // second line should be Password
+        file_Close(cfg);
+    else
+        print("Wi-Fi Configuration file not found");
+        repeat forever
+    endif
+
+    print("Connecting to ", [STR]ssid);
+    WiFi_Begin(ssid, password);
+    while(WiFi_Status() != WIFI_CONNECTED)
+        pause(500);
+        putch('.');
+    wend
+    putch('\n');
+    WiFi_PrintLocalIP(0);
+    putch('\n');
+
+    repeat
+    forever
+
+endfunc

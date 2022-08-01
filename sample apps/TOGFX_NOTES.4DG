@@ -1,0 +1,151 @@
+#platform "uLCD-32PTU"
+
+#inherit "4DGL_16bitColours.fnc"    // we'll be adding some colour to this example
+
+// A few legacy notes....
+
+//1]  GFX is OBSOLETE - TXT and GFX ositioning is now combined
+//2]  FONT4 is now external (if required) and must be inherited,
+//          it will be built into a data statement in your program.
+//          eg:-
+    
+		#inherit "FONT4.FNT"
+
+
+
+
+//to(...);
+
+//    4DGL has a method of making 'print' send it's output to places other than
+//    the screen using the 'to' statement. Normally, print just sends its output
+//    to the display in TEXT mode, however, the output from print can be sent
+//    to other places , known as 'streams'.
+ //   */
+
+#DATA
+    word st RED,GREEN,BLUE,YELLOW,BROWN
+#END
+
+    var w[100];
+
+//Print shadowed text at x,y from string using 'colours' array, count times.
+// Variable 'shadow' is set to a positive or negative number to determine which
+// way the image is cast, and by how many steps the image should shift.
+// Before calling this function, you must set the font and font widths.
+// You can on build this function to get a lot more functionality
+
+
+
+func Shadowtext(var xpos, var ypos, var str, var colr, var count, var shadow)
+
+    var n;
+    n := 0;
+    txt_Set(FONT_SIZE, FONT4);      // select the large font
+    repeat
+        gfx_MoveTo(xpos+n*shadow, ypos+n*shadow);
+        txt_Set(TEXT_COLOUR, colr[n] );           // get a colour from the array
+        //txt_Set(TEXT_COLOUR, *(colr+n));            // (note that you could also do it equivalently with this
+        txt_Set(TEXT_WIDTH, 2);         // and stretch it to double width
+        txt_Set(TEXT_HEIGHT, 2);
+        //to(GFX); print( [STR] str );               // print the coloured string to the graphics display (nb:- to(GFX) is now un-necessary
+        print( [STR] str );               // print the coloured string to the graphics display
+    until (++n == count);
+
+endfunc
+
+
+
+     var colours[5];
+
+func main()
+
+    var n, s;
+    //gfx_Cls();
+    //gfx_ClipWindow(20,20,200,200);
+    //gfx_Clipping(ON); // will have no effect as clip window is set to full size
+
+    txt_Set(TEXT_OPACITY, TRANSPARENT);
+
+    // set up some colours for the Shadowtext demo.
+    colours[0] := BLUE;
+    colours[1] := YELLOW;
+    colours[2] := RED;
+    colours[3] := LIME;
+    colours[4] := BLACK;
+
+    txt_MoveCursor(3, 4);    // set cursor to 4th line down, 5th column
+
+    print ( [STR] "Hello World!" );
+
+
+    /*
+    Printing shadowed text as shown below has also be placed into a function call
+    so you can make your program consume less code space and have a neat, re-usable
+    function. See the above function...
+    */
+
+    s := "GRAPHICS!";               // a string to print in graphics mode
+
+
+    txt_Set(FONT_SIZE, FONT4);      // select the large font
+    txt_Set(TEXT_WIDTH, 2);         // and stretch it to double width
+    txt_Set(TEXT_HEIGHT, 4);        // and 4 times the height height
+
+    txt_Set(TEXT_COLOUR, YELLOW);
+    gfx_MoveTo(16, 120);            // set graphics co-ordinates to where we will print
+    //to(GFX); print( [STR] s ); // to(GFX) no longer required
+    print( [STR] s );
+
+
+    txt_Set(TEXT_COLOUR, CRIMSON);  // overprint so we get a nice effect
+    gfx_MoveTo(17, 122);
+    txt_Set(TEXT_WIDTH, 2);         // and stretch it to double width
+    txt_Set(TEXT_HEIGHT, 4);        // and 4 times the height height
+    //to(GFX); print( [STR] s ); // to(GFX) no longer required
+    print( [STR] s );
+
+
+    txt_Set(TEXT_COLOUR, BROWN);
+    gfx_MoveTo(18, 123);
+    txt_Set(TEXT_WIDTH, 2);         // and stretch it to double width
+    txt_Set(TEXT_HEIGHT, 4);        // and 4 times the height height
+    //to(GFX); print( [STR] s ); // to(GFX) no longer required
+    print( [STR] s );
+
+    txt_MoveCursor(24, 0);          // set cursor to 4th line down, 5th column
+    txt_Set(TEXT_COLOUR, CYAN);
+    txt_Set(FONT_SIZE, FONT1);      // select the small font
+
+    print("  Note that we automatically go back to\n");
+    print("  text mode after each graphics print\n");
+
+
+    // Now, demo the Shadowtext(...)  function we made above
+    Shadowtext(10, 220, "LANGUAGE", colours, 5, 3);
+
+repeat forever
+
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

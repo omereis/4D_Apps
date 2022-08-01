@@ -1,0 +1,135 @@
+#platform "Gen4-uLCD-70DT"
+
+/****************************************************************************************
+*                                                                                       *
+*  4D Visi Sample                                                                       *
+*                                                                                       *
+*  Date:        2 February 2019                                                         *
+*                                                                                       *
+*  Description: A Simple demonstration of the use of graphical sliders and trackbars.   *
+*               Based on original Picaso Sample, but using pixxi internal function      *
+*                                                                                       *
+*  Getting it                                                                           *
+*  running:  1. Select the Com port your display is attached to and click Comp'nLoad.   *
+*               When prompted to, copy the .GCI and .DAT files to your uSD card and     *
+*               insert the uSD card into your display before clicking OK.               *
+*                                                                                       *
+*  Notes:    1. The first two lines pasted for sliders and trackbars only need to be    *
+*               done once. Dependind upon your code, you may not need the initial       *
+*               img_Show at all.                                                        *
+*            2. You should utilize the touch framework for touch processing. The        *
+*               framework is used in this example and you can copy it for your own use. *
+*            3. Both the slider and trackbar track under TOUCH_MOVING, you may want to  *
+*               have one or both under TOUCH_RELEASED and/or TOUCH_PRESSED              *
+*            4.and moveitrackbar are simple subroutines here, to enable    *
+*               the quick movement between touch actions. You could, of course,         *
+*               introduce parameters so that each routine could handle multiple         *
+*               switches. You could even take it as far as to use the same routine for  *
+*               all sliders and trackbars or the same orientation.                      *
+*                                                                                       *
+****************************************************************************************/
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "ledDigitsDisplay.inc"
+
+#inherit "VisualConst.inc"
+
+#inherit "SlideTrackTestConst.inc"
+
+var x, y ;
+func moveislider()
+    var posn ;
+
+    //1.0 generated 4/02/2019 1:55:45 PM
+    img_Show(hndl,islider1) ; // show initialy, if required
+    img_ClearAttributes(hndl, islider1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    posn := gfx_XYlinToVal(x, y, 0, 33, 178, 0, 100) ;
+    img_SetWord(hndl, islider1, IMAGE_INDEX, posn);
+    img_SetWord(hndl, iLeddigits2, IMAGE_INDEX, posn);
+    img_Show(hndl, islider1);
+    img_Show(hndl, iLeddigits2);
+
+    //txt_MoveCursor(20,40);
+    //print(posn);
+
+endfunc
+
+func moveitrackbar()
+    var posn ;
+
+    // trackbar1 1.0 generated 4/02/2019 1:49:18 PM
+    img_Show(hndl,itrackbar1) ; // show initialy, if required
+    img_ClearAttributes(hndl, itrackbar1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    posn := gfx_XYlinToVal(x, y, 0, 40, 172, 0, 100) ;
+    img_SetWord(hndl, itrackbar1, IMAGE_INDEX, posn);
+    img_Show(hndl, itrackbar1);
+    txt_MoveCursor(20, 20);
+    print([DEC3ZB] posn);
+
+//    gfx_CircleFilled(x, y, 3, WHITE);    // draw filled circle over approx position of trackbar
+endfunc
+
+func main()
+    var state, n ;
+//  Uncomment the following if uSD images used.
+
+    putstr("Mounting...\n");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    gfx_TransparentColour(0x0020);
+    gfx_Transparency(ON);
+
+    hndl := file_LoadImageControl("SLIDET~2.dat", "SLIDET~2.gci", 1);
+
+
+    // Leddigits1 1.0 generated 24/07/2022 15:35:47
+    //img_Show(hndl, iLeddigits1);  // show all digits at 0, only do this once
+
+    // Leddigits1 1.0 generated 24/07/2022 15:38:28
+    img_Show(hndl, iLeddigits1);  // show all digits at 0, only do this once
+
+    img_Show(hnd1, i4Dbutton1);
+    //img_Show (hndl, iLeddigits1);
+    img_Show (hndl, iLeddigits2);
+    img_Show(hndl,islider1) ; // show initialy, if required
+    img_SetWord(hndl, islider1, IMAGE_FLAGS, (img_GetWord(hndl, islider1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    img_Show(hndl,itrackbar1) ; // show initialy, if required
+    //img_SetWord(hndl, itrackbar1, IMAGE_FLAGS, (img_GetWord(hndl, itrackbar1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    //img_SetWord(hndl, itrackbar1, IMAGE_FLAGS, 17);
+    //gfx_LedDigits (
+    txt_MoveCursor(20,40);
+    print("20 x 40");
+
+    touch_Set(TOUCH_ENABLE);                            // enable the touch screen
+
+    repeat
+
+        state := touch_Get(TOUCH_STATUS);               // get touchscreen status
+        n := img_Touched(hndl,-1) ;
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_PRESSED)                        // if there's a press
+            x := touch_Get(TOUCH_GETX);
+            y := touch_Get(TOUCH_GETY);
+        endif
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_RELEASED)                      // if there's a release
+        endif
+
+        //-----------------------------------------------------------------------------------------
+        if(state == TOUCH_MOVING)                       // if it's moving
+            x := touch_Get(TOUCH_GETX);
+            y := touch_Get(TOUCH_GETY);
+            if (n == islider1) moveislider() ;
+            if (n == itrackbar1) moveitrackbar() ;
+        endif
+
+    forever
+endfunc

@@ -1,0 +1,84 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-70DT-P
+PlatRes     480x800
+Depends
+end
+Options
+    Visualizer
+    Speed                        9600
+    Checksum                     No
+    ResponseSize                 1
+    Multidrop                    No
+    Destination                  0
+    DestBank                     1
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+    MaxString                    75
+    ComPort                      0
+    ComTX1pinIdx                 0
+    ComRX1pinIdx                 0
+    FileSystem                   FATfs
+    FlashEraseOption             Optimal
+    SPIenable                    0
+    SPIsdo                       3
+    SPIsdi                       2
+    SPIsck                       1
+    FlashForceLT16MB             No
+end
+Form
+    Name                         Form1
+    Alias                        Form1
+    Bgtype                       Color
+    Color                        0xB8B8B8
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+AniButton
+    Name                         Anibutton1
+    Alias                        Anibutton1
+    Height                       143
+    Images                       anib_01.png\nanib_02.png\nanib_03.png\nanib_04.png\nanib_05.png
+    Interval                     100
+    Left                         48
+    Matrix                       -1
+    Momentary                    No
+    Stretch                      No
+    Top                          0
+    Width                        143
+    OnChanged                    ''
+end
+AniButton
+    Name                         Anibutton2
+    Alias                        Anibutton2
+    Height                       143
+    Images                       anib_01.png\nanib_02.png\nanib_03.png\nanib_04.png\nanib_05.png
+    Interval                     100
+    Left                         48
+    Matrix                       -1
+    Momentary                    Yes
+    Stretch                      No
+    Top                          160
+    Width                        143
+    OnChanged                    ''
+end
+Ellipse
+    Name                         Ellipse1
+    Alias                        Ellipse1
+    Color                        RED
+    Filled                       Yes
+    X                            350
+    Xrad                         74
+    Y                            128
+    Yrad                         64
+end

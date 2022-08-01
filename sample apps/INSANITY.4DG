@@ -1,0 +1,310 @@
+#platform "uLCD-32PTU"
+
+#inherit "FONT4.fnt"
+/*  4DGL Demo Application
+    - Sanity Check Demo -
+    -- PICASO Platform --
+*/
+
+// NB this prog when run on Picaso legacy works differently.
+// Picaso legacy has a default pen size of solid.
+// With the introduction of gfx_RectangleFilled etc, and
+// the other 'filled' objects, pensize has been set as default
+// to outline mode. NB pensize is set to outline mode
+// after each gfx_Cls(), which is opposite to legacy Picaso.
+// Also, in Picaso GFX, default text mode is OPAQUE, on
+// Picaso legacy it was transarent.
+// (SEE lines 156, 157)
+
+// displays available memory and bouncing ball.
+// plays sounds when ball hits walls.
+// requires the following files:-
+
+// police.wav
+// laser.wav
+// ding.wav
+// chimes.wav
+// flush.wav
+
+#CONST
+    WHITE         0xFFFF
+    BLACK         0x0000
+    LEFTCOLOUR    0xF800
+    RIGHTCOLOUR   0xFFFF
+    TOPCOLOUR     0x001F
+    BOTTOMCOLOUR  0x07E0
+#END
+
+
+#CONST
+    LEFTHIT  22
+    RIGHTHIT 218
+#END
+
+#constant TOPHIT        22
+#constant BOTTOMHIT     298
+#constant XSPEED        2
+#constant YSPEED        3
+
+
+// constant object definitions
+
+#constant ERASEBALL     $ball_x, ball_y, BALLSIZE, BLACK
+#constant DRAWBALL      $ball_x, ball_y, BALLSIZE, ball_colour
+
+#constant LEFTWALL      $0, 0, 10, 319, LEFTCOLOUR
+#constant TOPWALL       $0, 0, 239, 10, TOPCOLOUR
+
+
+
+#constant RIGHTWALL     $229, 0, 239, 319, RIGHTCOLOUR
+
+
+#constant BOTTOMWALL    $gfx_Rectangle(0, 309, 239, 319, BOTTOMCOLOUR)
+
+#constant BALLSIZE 7  // NOTICE THAT CONSTANTS CAN BE POST DECLARED
+
+
+var ball_x, ball_y, ball_r, ball_colour;
+var xdir, ydir;
+
+
+func drawWalls()
+    gfx_Rectangle(LEFTWALL);            // Draw Left Wall
+    gfx_Rectangle(TOPWALL);             // Draw Top Wall
+    gfx_Rectangle(RIGHTWALL);           // Draw Right Wall
+    BOTTOMWALL;                          // Draw Bottom Wall
+endfunc
+
+func collision()
+
+    var e;
+txt_MoveCursor(1,1);
+
+    if(ball_x <= LEFTHIT)
+        ball_x := LEFTHIT;
+        ball_colour := LEFTCOLOUR;
+        xdir := -xdir;
+        file_PlayWAV("laser.wav");
+    endif
+    if(ball_x >= RIGHTHIT)
+        ball_x := RIGHTHIT;
+        ball_colour := RIGHTCOLOUR;
+        xdir := -xdir;
+        file_PlayWAV("police.wav");
+    endif
+    if (ball_y <= TOPHIT)
+        ball_y := TOPHIT;
+        ball_colour := TOPCOLOUR;
+        ydir := -ydir;
+        file_PlayWAV("ding.wav");
+    endif
+    if(ball_y >= BOTTOMHIT)
+        ball_y := BOTTOMHIT;
+        ball_colour := BOTTOMCOLOUR;
+        ydir := -ydir;
+        file_PlayWAV("chimes.wav");
+    endif
+
+
+endfunc
+
+func main()
+
+
+    var r,n, oldm;
+
+
+    oldm := -1;
+
+    txt_Set(FONT_SIZE, FONT1);
+    putstr("Mounting...\n");
+    if (!file_Mount())
+        while(!file_Mount())
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    print("Drive mounted.\n");
+
+    print("\n\nWave files:-\n");
+    file_Dir("*.wav");
+    pause(3000);
+    gfx_Cls();
+
+    // just make sure we have all our dependencies
+    if(!file_Exists("flush.wav")) putstr("flush.wav not found\n");
+    if(!file_Exists("laser.wav")) putstr("laser.wav not found\n");
+    if(!file_Exists("police.wav")) putstr("police.wav not found\n");
+    if(!file_Exists("ding.wav")) putstr("ding.wav not found\n");
+    if(!file_Exists("chimes.wav")) putstr("chimes.wav not found\n");
+
+    //snd_Volume(127);
+    //snd_BufSize(2);
+
+    file_PlayWAV("flush.wav");  // play the file
+
+    while ( (n := snd_Playing()) )
+        print(n," blocks to go\n");       // show how many blocks to go
+        pause(250);
+    wend
+
+
+    gfx_Cls();
+
+    //gfx_Set(PEN_SIZE, SOLID);               // for Picaso Legacy compatibility, unmask this line
+    //txt_Set(TEXT_OPACITY, TRANSPARENT);     // for Picaso Legacy compatibility, unmask this line
+
+
+
+    ball_colour := WHITE;                            // initial ball colour
+    xdir := 1; ydir := 1;                             // initial ball direction
+    ball_x := 50; ball_y := 50;                       // initial ball position
+    gfx_Circle(DRAWBALL);                           // draw the first instance of ball
+    drawWalls();                                    // draw the Walls
+
+    txt_Set(FONT_SIZE, FONT2);
+    gfx_MoveTo(40,2);
+    to(GFX); print([DEC5] mem_Heap()," bytes available");
+
+
+    gfx_Set(SCREEN_MODE, LANDSCAPE_R);
+
+    txt_Set(TEXT_COLOUR, 0x0000);
+    gfx_MoveTo(80,230);
+    to(GFX); print("Picaso Insanity Check!!!");
+
+
+    txt_Set(FONT_SIZE, FONT4);
+    txt_Set(TEXT_COLOUR, 0x07E0);
+    gfx_Set(SCREEN_MODE, PORTRAIT);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    touch_Set(TOUCH_ENABLE);                               // enable the touch screen
+
+    repeat
+ //       display_Vsync();                            // wait for vsync for smooth operation
+        pause(10);                      // has no effect on uLCD32032-P1 so use delay instead
+        gfx_Circle(ERASEBALL);                      // erase the ball
+        ball_x := ball_x + xdir * XSPEED;
+        ball_y := ball_y + ydir * YSPEED;
+        collision();                                // detect collision
+        gfx_Circle(DRAWBALL);                       // redraw the ball
+
+        n := mem_Heap();
+        if (n != oldm)              // if memsize has changed, update the display
+            oldm := n;
+            txt_MoveCursor(3,3);
+            print( "mem =       ");
+            txt_MoveCursor(3,10);
+            print( [DEC5] mem_Heap() );
+        endif
+    // wait forever unless we get a touch
+    until (touch_Get(TOUCH_STATUS) == TOUCH_PRESSED);
+
+    snd_Stop();   // release buffers for a clean exit
+
+    file_Unmount();
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

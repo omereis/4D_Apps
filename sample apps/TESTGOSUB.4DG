@@ -1,0 +1,87 @@
+#platform "uLCD-32PTU"
+
+/*      4DGL Demo Application
+        - gosub dispatcher -
+        -- PICASO Platform --
+*/
+
+
+     var a,b,c,d,e;
+
+
+
+
+func test(var task)
+
+
+
+    a := 'A';
+    b := 'B';
+    c := 'C';
+    d := 'D';
+    e := 'E';
+
+
+    // gosub can be used as a server or dispatching situation, as shown here
+    gosub (task), (Default, labelA, labelB, labelC, labelD, labelE);
+    return;
+
+labelE:
+    putch(e);
+    endsub;
+
+
+labelD:
+    putch(d);
+    endsub;
+
+labelC: putch(c);
+        endsub;
+
+labelB: putch(b);
+        endsub;
+
+labelA: putch(a);
+        endsub;
+
+Default: putch('.');
+        endsub;
+
+endfunc
+
+
+
+
+func main()
+    var z;
+
+    repeat
+        gfx_Cls();
+        txt_MoveCursor(0,0);
+        z := -50;
+        while (z<50)
+            test(z++);
+        wend
+        pause(1000);
+        gfx_Cls();
+        pause(500);
+    forever
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

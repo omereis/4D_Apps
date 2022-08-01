@@ -1,0 +1,68 @@
+#platform "Gen4-uLCD-70DT"
+
+// Program Skeleton 1.2 generated 7/23/2015 9:19:41 AM
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "VisualConst.inc"
+
+#inherit "sineWave_R_1_0DrlConst.inc"
+
+//#inherit "scope4.inc"
+
+var new_y1[250], old_y1[250];
+
+func main()
+    var i,j,k;
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+    gfx_Cls();
+
+    // Scope1 1.0 generated 7/23/2015 9:50:39 AM
+    // Create empty initial scope
+    gfx_RectangleFilled(40, 52, 489, 201, BLACK) ;
+    //gfx_Hline(52 + 75, 40, 289, YELLOW) ;
+    gfx_Hline(52 + 75, 40, 289, WHITE) ;
+    Graticule(40, 52, 289, 201, 10,  10, 0x0280) ;
+
+
+    // fill up the buffer
+    for(i := 0; i < 250; i++)
+        new_y1[i] := SIN(i);
+    next
+    j := i ;
+    k := 5;
+    //k := 10; // try this
+    //k := 15; // try this
+    repeat
+        // draw and update scope
+        Graticule(40, 52, 289, 201, 10,  10, 0x0280) ;
+        gfx_Scope(40, 250, 126, 250, 0, 50, BLACK,
+                  old_y1, new_y1, LIME, 0,0,0, 0,0,0, 0,0,0 ) ;
+        gfx_Hline(52 + 75, 40, 289, YELLOW) ;
+
+        // update the buffer
+        mem_Copy(&new_y1[k], new_y1, 2*(sizeof(new_y1)-k)); // shift contents k units to the left
+
+        for(i := sizeof(new_y1)-k; i < sizeof(new_y1); i++) // fill the k right-most elements with new values
+            new_y1[i] := SIN(j) ;
+            j++;
+        next
+    forever
+
+endfunc
+
+
+func Graticule(var x1, var y1, var x2, var y2, var xinc, var yinc, var color)
+    var y ;
+    x1 += xinc ;
+    while (x1 < x2)
+        y := y1 + yinc ;
+        while (y < y2)
+            gfx_PutPixel(x1, y, color) ;
+            y += yinc ;
+        wend
+        x1 += xinc ;
+    wend
+endfunc
+

@@ -1,0 +1,75 @@
+#platform "pixxiLCD-13P2CT-CLB"
+
+
+#inherit "4DGL_16bitColours.fnc"
+
+#inherit "ESP8266_4DGL_Flash.inc"
+
+// Contains the Wi-Fi network SSID and Password
+#inherit "ESP_WiFi_Network.inc"
+// Edit this file to match your Wi-Fi network
+// The changes will be used for all other examples
+
+func main()
+
+    gfx_ScreenMode(PORTRAIT) ; // change manually if orientation change
+
+    putstr("Prepare ESP to receive OTA update (from Arduino)\n");
+
+    ESP_Initialize(ESP_4DISCOVERY13);
+
+    WiFi_SetMode(WIFI_STATION);
+
+    print("Connecting to ", [STR]SSID);
+    WiFi_Begin(SSID, PASSWORD);
+    while(WiFi_Status() != WIFI_CONNECTED)
+        pause(500);
+        putch('.');
+    wend
+    putch('\n');
+    WiFi_PrintLocalIP(0); // Print local IP to current cursor position
+
+    putstr("\nWaiting for update...\n");
+
+    var res;
+    res := ESP_FirmwareUpdate(handleEspUpdate, 30000);  // Wait up to ~30 seconds for the update
+
+    if (res)
+        print("Resetting 4Discovery in 1000ms\n");
+        pause(1000);
+        SystemReset();
+    else
+        print("Failed to update ESP firmware\n");
+    endif
+
+    repeat                      // maybe replace
+    forever                     // this as well
+
+endfunc
+
+// Define a Handler Function
+func handleEspUpdate(var cmd, var progress)
+    var y;
+    switch (cmd)
+        case OTA_UPDATE_TIMEOUT:
+            print("ESP update didn't start on time\n");
+            break;
+        case OTA_UPDATE_STARTED:
+            print("ESP Update Started\n");
+            break;
+        case OTA_UPDATE_PROGRESS:
+            y := peekW(TEXT_YPOS);
+            gfx_MoveTo(0, y);
+            print("Update at ", progress, " percent  ");
+            break;
+        case OTA_UPDATE_ENDED:
+            print("\nESP Updated Successfully\n");
+            break;
+        case OTA_UPDATE_ERROR:
+        default:
+            print("\nError Occurred while updating ESP\n");
+            break;
+    endswitch
+endfunc
+
+

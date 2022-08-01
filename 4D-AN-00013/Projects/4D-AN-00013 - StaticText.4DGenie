@@ -1,0 +1,48 @@
+﻿Version     0.0
+Platform    uLCD-32PT-L
+PlatRes     240x320
+Depends
+end
+Options
+    Genie
+    Speed                        9600
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  0
+    SndBuf                       0
+end
+Form
+    Name                         Form0
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+StaticText
+    Name                         Statictext0
+    AutoSize                     No
+    Caption                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet venenatis erat. Ut mi libero, feugiat a pellentesque non, tristique id enim. Vestibulum ante ante, tristique quis ultricies porttitor, pulvinar non justo. Morbi mollis arcu a mauris tincidunt accumsan. '
+    Color                        BLACK
+    Font.Color                   WHITE
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    9
+    Font.Style                   []
+    Height                       120
+    Left                         100
+    Top                          100
+    Transparent                  Yes
+    Visible                      Yes
+    Width                        200
+    WordWrap                     Yes
+end

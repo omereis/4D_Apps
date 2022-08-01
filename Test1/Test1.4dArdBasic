@@ -1,0 +1,84 @@
+﻿Version     0.0
+Platform    uLCD-70DT-AR-L
+PlatRes     480x800
+Depends
+end
+Options
+    Arduino_Basic
+    Speed                        9600
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  0
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 Yes
+    MaxString                    75
+    ComPort                      0
+    ComTX1pinIdx                 0
+    ComRX1pinIdx                 0
+    FileSystem                   FATfs
+    FlashEraseOption             Optimal
+    SPIenable                    0
+    SPIsdo                       3
+    SPIsdi                       2
+    SPIsck                       1
+    FlashForceLT16MB             No
+end
+Form
+    Name                         Form1
+    Alias                        Form1
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Rectangle
+    Name                         Rectangle1
+    Alias                        Rectangle1
+    Color                        0xD32B40
+    Filled                       Yes
+    Height                       20
+    Left                         72
+    Outlined                     Yes
+    OutlineColor                 WHITE
+    Pattern                      Fine
+    Top                          57
+    Width                        40
+end
+Triangle
+    Name                         Triangle1
+    Alias                        Triangle1
+    Color                        BLUE
+    Filled                       Yes
+    Outlined                     No
+    OutlineColor                 WHITE
+    Pattern                      Solid
+    X1                           168
+    X2                           153
+    X3                           183
+    Y1                           46
+    Y2                           76
+    Y3                           76
+end
+Ellipse
+    Name                         Ellipse1
+    Alias                        Ellipse1
+    Color                        RED
+    Filled                       Yes
+    X                            142
+    Xrad                         40
+    Y                            120
+    Yrad                         20
+end

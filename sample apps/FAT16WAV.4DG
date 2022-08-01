@@ -1,0 +1,105 @@
+#platform "uLCD-32PTU"
+
+/*
+
+    test back to back audio files
+
+*/
+
+
+#inherit "4DGL_16bitColours.fnc"
+
+
+//===========================================================================
+func main()
+    var x;
+
+    gfx_Cls();
+    txt_Set(FONT_SIZE, FONT1);
+    //txt_Set(TEXT_COLOUR, GRAY);
+    txt_Set(TEXT_OPACITY, OPAQUE);
+
+    putstr("Mounting...\n");
+    if (!file_Mount())
+        print("Could not mount drive...");
+        repeat forever
+    endif
+
+    print("---- WAV FILE TEST ----\n");
+
+    x := file_Dir("*.wav");
+    if (!x) print("NoFiles\n");
+    pause(5000);
+
+    gfx_Cls();
+    //snd_Volume(127);  // maxvol
+    snd_Volume(30);
+
+repeat
+
+    file_PlayWAV("laser.wav");
+    while( snd_Playing() );
+
+    file_PlayWAV("chimes.wav");
+    while( snd_Playing() );
+
+    file_PlayWAV("ding.wav");
+    while( snd_Playing() );
+
+    file_PlayWAV("police.wav");
+    while( snd_Playing() );
+
+    putstr(".");
+
+forever
+
+
+    file_Unmount();     // finished with fat16
+    while(1);           // halt
+endfunc
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

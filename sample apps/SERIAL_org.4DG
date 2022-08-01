@@ -1,0 +1,58 @@
+#platform "Gen4-uLCD-70DT"
+
+/*
+     - serial interface test-
+      -- PICASO Platform --
+*/
+#constant LOGON $"Welcome to Diablo16 Serial Test\n"
+
+//==================================================================================================
+func main()
+    var ch;
+
+    gfx_Cls();
+    txt_Set(FONT_SIZE, FONT_4);
+    print ("Serial Input Test\n");
+    print ("Download prog to flash\n");
+    print ("Then use WS3 Terminal\n\n");
+    putstr(LOGON);
+    pause(5000);
+    to(COM0); print("Serial Input Test:\n");
+
+    // now just stay in a loop
+    repeat
+
+        ch := serin();
+        if (ch != -1)
+            print( [CHR] ch );   // if a key was received from PC, print its ascii value
+
+            if (isdigit(ch)) print ("Character is an ASCII digit\n");
+            if (isxdigit(ch)) print ("Character is ASCII Hexadecimal\n");
+            if (isupper(ch)) print("Character is ASCII uppercase letter\n");
+            if (islower(ch)) print("Character is ASCII lowercase letter\n");
+            if (isalpha(ch)) print("Character is an ASCII uppercase or lowercase\n");
+            if (isalnum(ch)) print("Character is an ASCII Alphanumeric\n");
+            if (isprint(ch)) print("Character is a printable ASCII\n");
+            if (isspace(ch)) print("Character is a space type character\n");
+
+
+        endif
+
+    forever
+
+
+
+endfunc
+//==================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
