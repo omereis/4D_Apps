@@ -11,7 +11,16 @@
 
 #inherit "MyCommConst.inc"
 
+#DATA
+    // IGauge1 Data Start
+    word IIGauge1 244, 56, 28, 159, 80, 0, 50, 0, 0, 0x18E3, 0x0280, LIME,
+        0x5280, YELLOW, 0x5000, RED, 51, 36, 0x0
+    // IGauge1 Data End
+#END
+var vIGauge1RAM[WIDGET_RAM_SPACE] ;
+
 func main()
+    var value, frame, status, dir;
 //  Uncomment the following if uSD and uSD based GCI images, fonts or strings used.
 /**/
 //  var hstrings ; // Handle to access uSD strings, uncomment if required
@@ -32,6 +41,8 @@ func main()
 //  hFontn := file_LoadImageControl("MyComm.dan", "MyComm.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
 //  hstrings := file_Open("MyComm.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
     hndl := file_LoadImageControl("MyComm.dat", "MyComm.gci", 1);
+    txt_MoveCursor(5, 5);
+    print("hnd1 loaded: ", hndl);
 /**/
 
 //  Uncomment the following if Flash and Flash based GCF images, fonts or strings used.
@@ -49,10 +60,52 @@ func main()
     hndl := spiflash_LoadGCFImageControl(SPIx, EnablePin);    // SPIx is SPI0 or SPI1, as appropriate, EnablePin is USD_ENABLE or PA?
 */
 
+
+
+    // Meter1 1.0 generated 03/08/2022 9:52:44
+    img_SetWord(hndl, iMeter1, IMAGE_INDEX, frame) ; // where frame is 0 to 100 (for a displayed 0 to 100)
+    img_Show(hndl,iMeter1) ;
+
+    // IGauge1 1.0 generated 03/08/2022 9:52:49
+    gfx_Gauge(value, vIGauge1RAM, IIGauge1) ;    // where value is 0 to 50
+
     gfx_Set(SCREEN_MODE,LANDSCAPE) ;
     img_Show(hndl, ALL);
 
+    status := img_SetWord (hndl, iMeter1, IMAGE_INDEX, 55);
+    //txt_MoveCursor(5, 45);
+    //print("status: ", status);
+    status := img_Show(hndl, iMeter1);
+    //txt_MoveCursor(15, 45);
+    //print("status: ", status);
+    value := 0;
+    dir := 1;
     repeat
+        status := img_SetWord (hndl, iMeter1, IMAGE_INDEX, value);
+        status := img_Show(hndl, iMeter1);
+        pause(1000);
+        value := value + 5;
+        if (value > 100)
+            value := 0;
+        endif
+/*
+        if (value >= 100)
+            dir := -1;
+        else
+            if (value <= 0)
+                dir := 1;
+            endif
+        endif
+        if (dir == 1)
+            value := value + 50;
+        else
+            value := value - 50;
+        endif
+*/
+        txt_MoveCursor(10, 5);
+        print("value: ", value);
+        txt_MoveCursor(11, 5);
+        print("dir: ", dir);
     forever
 endfunc
 

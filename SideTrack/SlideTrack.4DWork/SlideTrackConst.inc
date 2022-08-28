@@ -1,4 +1,4 @@
-// File generated 01/08/2022 8:32:07
+// File generated 08/08/2022 11:25:25
 // Warning! This is a generated file, any manual changes will be
 // lost during the next generation.
 
@@ -8,9 +8,10 @@
     islider1        // offset 0x0
     itrackbar1      // offset 0x12FA00
     iLeddigits1     // offset 0x2B4000
-    iiLeddigits1    // offset 0x2B7200
-    iLeddigits2     // offset 0x2C6A00
-    iiLeddigits2    // offset 0x2C9C00
+    iiLeddigits1    // offset 0x2BB800
+    iLeddigits2     // offset 0x2CE600
+    iiLeddigits2    // offset 0x2D1800
+    iSlider2        // offset 0x2E1000
 #END
 
 

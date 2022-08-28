@@ -11,7 +11,7 @@
 
 // var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
 
-#inherit "Com-Advance_oe_01Const.inc"
+#inherit "Com-Advance_oe_02Const.inc"
 
 #DATA
     // IGauge2 Data Start
@@ -23,7 +23,7 @@
         0x5280, YELLOW, 0x5000, RED, 75, 53, 0x2
     // IGauge1 Data End
 
-   byte input_buf "First my name\r -999.00, 2.222e-06, 3.555, 15.444, 0xAA,",0         // a  pointer to input string via rs232 24/02/2022
+   byte input_buf "First my name\r -999.00, 2.222e-06, 3.555, 15.444, 0xAA,",0         // a  pointer to inputing via rs232 24/02/2022
    byte input_buf1 "Second my name\r 3.333e-06, 4440.44, 8.888, 7.777, 0x55,",0         // a  pointer to input string via rs232 24/02/2022
 
 
@@ -72,17 +72,12 @@ func HandleCom()
             loop := iloop;
 
             if ( loop %= 2 )
-
-            gfx_RectangleFilled(264, 108, 303, 147, PURPLE) ;
-
+                gfx_RectangleFilled(264, 108, 303, 147, PURPLE) ;
             else
-
-            gfx_RectangleFilled(264, 108, 303, 147, BLUE) ;
-
+                gfx_RectangleFilled(264, 108, 303, 147, BLUE) ;
             endif
 
             buf_Ptr := str_Ptr( combuf );
-
             ProcessString ( buf_Ptr );
 
             str4_Ptr := str_Ptr( tmpstr4 );
@@ -351,11 +346,6 @@ inputPtr := str_Ptr(Input_Str);
 endfunc
 
 func main()
-//  Uncomment the following if uSD and uSD based GCI images, fonts or strings used.
-
-//  var hstrings ; // Handle to access uSD strings, uncomment if required
-//  var hFontx ;   // Handle to access uSD fonts, uncomment if required and change n to font number
-
     putstr("Mounting...From RAM\n");
     if (!(file_Mount()))
         while(!(file_Mount()))
@@ -366,30 +356,25 @@ func main()
         wend
     endif
 
-    // Form1 1.1 generated 08/08/2022 11:52:34
-
-    // Form1 1.1 generated 08/08/2022 11:54:51
-
-    // Form1 1.1 generated 08/08/2022 11:56:46
-    gfx_BGcolour(0xD699) ;
-    gfx_Cls() ;
-
     Resnum++;
 
+    Handle := file_LoadImageControl("COM-AD~2.dat", "COM-AD~2.gci", 1);
 
-//    gfx_TransparentColour(0x0020);    // uncomment if transparency required, please understand why and when you need to use this
-//    gfx_Transparency(ON);             // uncomment if transparency required, as generally there is a performance hit when using it
+    // Statictext1 1.0 generated 11/08/2022 10:48:14
+    img_Show(Handle, iStatictext1) ;
+    img_SetWord (Handle, iStatictext1, IMAGE_TAG2, "my string");
 
-//  hFontn := file_LoadImageControl("COM-AD~1.dan", "COM-AD~1.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
-//  hstrings := file_Open("COM-AD~1.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+    // Label8 1.0 generated 08/08/2022 12:29:02
+    txt_FGcolour(0xF7A1) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(89, 25) ;
+    putstr("Com-Advance_oe_02Const") ;
+    // Form1 1.1 generated 28/02/2022 14:10:39
 
-    Handle := file_LoadImageControl("COM-AD~1.dat", "COM-AD~1.gci", 1);
-
-
-    // Label1 1.0 generated 08/08/2022 11:56:16
-    txt_FGcolour(BLACK) ;
-    txt_BGcolour(0xD699) ;
-    gfx_MoveTo(40, 88) ;
+    // Label1 1.0 generated 28/02/2022 14:10:39
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(32, 84) ;
     putstr("LABEL1:") ;
 
     // Label2 1.0 generated 28/02/2022 14:10:39
@@ -445,26 +430,14 @@ func main()
     Handle := spiflash_LoadGCFImageControl(SPIx, EnablePin);    // SPIx is SPI0 or SPI1, as appropriate, EnablePin is USD_ENABLE or PA?
 */
 
-
-    // 4Dbutton1 1.0 generated 02/08/2022 8:44:22
-    img_ClearAttributes(hndl, i4Dbutton1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
-    img_Show(hndl, i4Dbutton1);  // show button, only do this once
-    img_SetWord(hndl, i4Dbutton1, IMAGE_INDEX, 0); // where state is 0 for up and 1 for down
-    img_Show(hndl,i4Dbutton1) ;
-
-
     gfx_Set(SCREEN_MODE,LANDSCAPE) ;
 
     img_Show(Handle,ALL);
 
-    // Statictext1 1.0 generated 08/08/2022 12:25:13
-    img_Show(Handle,iStatictext1) ;
-
         // Rectangle1 1.0 generated 15/03/2022 8:36:39
     gfx_OutlineColour(WHITE) ;
     gfx_LinePattern(LPFINE) ;
-    //gfx_RectangleFilled(264, 108, 303, 147, YELLOW) ;
-    gfx_RectangleFilled(264, 108, 303, 147, GREEN) ;
+    gfx_RectangleFilled(264, 108, 303, 147, YELLOW) ;
     gfx_OutlineColour(BLACK) ;
     gfx_LinePattern(LPSOLID) ;
 
@@ -477,14 +450,62 @@ func main()
  //   to(COM0); print ("\nNUMBER OF RESETS = ", Resnum,"\n");
 
 
-    pause(10000);
+    //txt_MoveCursor(31,10);                        // reset cursor to line 3, column 2
+    //print("No Data");        // show count of chars in buffer
 
-    repeat
+    txt_MoveCursor(32,5);                        // reset cursor to line 3, column 2
+    print("Waiting...");        // show count of chars in buffer
+    pause(10000);
+    txt_MoveCursor(32,5);                        // reset cursor to line 3, column 2
+    print("Starting...");        // show count of chars in buffer
+
+    //txt_MoveCursor(31,10);                        // reset cursor to line 3, column 2
+    //print("No Data");        // show count of chars in buffer
 
     com_Init(combuf, 77, '\r');       // set up a comms buffer, requires ':' qualifiere (lead in) character
     to(COM0); print("Serial Input Test - Send a file:\n");
 
+    txt_MoveCursor(33,10);                        // reset cursor to line 3, column 2
+    var psik := 0x2c;
+    to(COM0);print("Init string sent\n");
+    to(COM0);print("Comma: '",",","'\n");
+    to(COM0);print("????: '",[STR]psik,"\n");
+
+    var n := 1;
+    var c, str;
+
     repeat
+        if (com_Count() > 0)
+            c := serin();
+            //buf_Ptr := str_Ptr (combuf);
+            //p := str_Ptr(combuf);
+            //to(COM0); print("In: ", c, "\n");
+            serout(c);
+            //c := str_GetByte(p);
+            //while (str_GetByte(p) != 0x2c)
+/*
+while (c != 0x2c)
+                to (COM0); print(n, c, "\n");
+                n := n + 1;
+                pause(100);
+                str_PutByte(q, c);
+                c := str_GetByte(p);
+            wend
+            to(COM0); print("q: ", q);//print(buf_Ptr);//print("a");
+            pause(500);
+            txt_MoveCursor(25,10);                        // reset cursor to line 3, column 2
+            print("COM: ", q);
+*/
+        endif
+        pause(100);
+    forever
+/*
+
+    repeat
+        if (com_Count() > 0)
+            txt_MoveCursor(31,10);                        // reset cursor to line 3, column 2
+            print("Buffered ", (com_Count()));        // show count of chars in buffer
+        endif
 
         txt_MoveCursor(1,1);                        // reset cursor to line 3, column 2
         print("Waiting for recieved file to start...");
@@ -498,7 +519,7 @@ func main()
         to(COM0); print("Recieved Buffer : ", [STR] combuf,"\n");
 
     HandleCom();
-
+*/
 
 //    state := touch_Get(TOUCH_STATUS); // get touchscreen status
 
@@ -581,8 +602,6 @@ func main()
 //    pause(250);
 
         */
-
-        forever
 
 endfunc
 

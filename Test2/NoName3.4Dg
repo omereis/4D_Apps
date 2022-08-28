@@ -1,0 +1,79 @@
+#platform "Gen4-uLCD-70DT"
+
+
+// Program Skeleton 1.5 generated 02/08/2022 8:49:11
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "KBRoutines.inc"
+
+#inherit "VisualConst.inc"
+
+// var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
+
+#inherit "NoName3Const.inc"
+
+#DATA
+    // ISwitch1 Data Start
+    word IISwitch1 176, 24, 130, 60, 0x0, PINK, BLACK, 4, 3, DARKRED, 0x3186,
+        CnISwitch1, CfISwitch1, 2, 1, WHITE, RED
+    byte CnISwitch1 "On",0
+    byte CfISwitch1 "Off",0
+    // ISwitch1 Data End
+#END
+var vISwitch1RAM[WIDGET_RAM_SPACE] ;
+
+func main()
+    var posn, x, y;
+
+    putstr("Mounting...");
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+    gfx_TransparentColour(0x0020);
+    gfx_Transparency(ON);
+    putstr("Mounted\n");
+
+    hndl := file_LoadImageControl("NoName3.dat", "NoName3.gci", 1);
+    putstr("hnd1: ");
+    putstr(hndl);
+    putstr("\n");
+    // Form1 1.1 generated 02/08/2022 8:56:05
+
+
+    // Circle1 1.0 generated 02/08/2022 9:14:37
+    gfx_CircleFilled(456, 148, 134, 0x69D8) ;
+
+    // Trackbar1 1.0 generated 02/08/2022 8:56:05
+    putstr ("iTrackbar1\n");
+    putstr(iTrackbar1);
+    putstr("\n");
+
+    // Trackbar1 1.0 generated 02/08/2022 9:29:13
+    img_Show(hndl,iTrackbar1) ; // show initialy, if required
+    img_ClearAttributes(hndl, iTrackbar1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    posn := gfx_XYlinToVal(x, y, 0, 115, 247, 0, 100) ;
+    img_SetWord(hndl, iTrackbar1, IMAGE_INDEX, posn);
+    img_Show(hndl, iTrackbar1);
+
+
+    // ISwitch1 1.0 generated 02/08/2022 8:58:28
+    gfx_Switch(1, vISwitch1RAM, IISwitch1) ;
+
+
+    // Thermometer1 1.0 generated 02/08/2022 10:13:28
+    img_SetWord(hndl, iThermometer1, IMAGE_INDEX, 17) ; // where frame is 0 to 100 (for a displayed -1 to -1)
+    img_Show(hndl,iThermometer1) ;
+
+    // Trackbar1 1.0 generated 02/08/2022 8:59:52
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+
+    repeat
+    forever
+endfunc
+

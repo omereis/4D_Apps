@@ -1,0 +1,157 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-70DT-L
+PlatRes     480x800
+Depends
+end
+Options
+    Visualizer
+    Speed                        9600
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  0
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+    MaxString                    75
+    ComPort                      0
+    ComTX1pinIdx                 0
+    ComRX1pinIdx                 0
+    FileSystem                   FATfs
+    FlashEraseOption             Optimal
+    SPIenable                    0
+    SPIsdo                       3
+    SPIsdi                       2
+    SPIsck                       1
+    FlashForceLT16MB             No
+end
+Form
+    Name                         Form1
+    Alias                        Form1
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Circle
+    Name                         Circle1
+    Alias                        Circle1
+    Color                        0xC43A68
+    Filled                       Yes
+    Rad                          134
+    X                            456
+    Y                            148
+end
+Trackbar
+    Name                         Trackbar1
+    Alias                        Trackbar1
+    BorderWidth                  10
+    Color                        clBtnFace
+    Frequency                    10
+    GutterBevel.BorderColor      clBtnFace
+    GutterBevel.BorderWidth      0
+    GutterBevel.InnerColor       BLACK
+    GutterBevel.InnerHighlight   clBtnHighlight
+    GutterBevel.InnerOutline     None
+    GutterBevel.InnerShadow      clBtnShadow
+    GutterBevel.InnerSpace       1
+    GutterBevel.InnerStyle       Lowered
+    GutterBevel.Innerwidth       2
+    GutterBevel.OuterColor       clBtnFace
+    GutterBevel.OuterHighlight   clBtnHighlight
+    GutterBevel.OuterOutline     Outer
+    GutterBevel.OuterShadow      clBtnShadow
+    GutterBevel.OuterSpace       0
+    GutterBevel.OuterStyle       Raised
+    GutterBevel.Outerwidth       1
+    GutterBevel.Visible          Yes
+    GutterColor                  BLACK
+    GutterWidth                  9
+    Height                       175
+    Left                         143
+    Maxvalue                     100
+    Minvalue                     0
+    Orientation                  Vertical
+    ScaleOffset                  5
+    TickColor                    BLACK
+    TickMarks                    Both
+    Top                          101
+    Width                        45
+    OnChanged                    ''
+    OnChanging                   ''
+end
+iSwitch
+    Name                         ISwitch1
+    Alias                        ISwitch1
+    BevelMainColor               PINK
+    BevelShadowColor             BLACK
+    ContainerBevel               4
+    FontSize                     1
+    Font                         FONT2
+    Height                       60
+    Left                         176
+    OFFColor                     0x303030
+    OFFLabel                     Off
+    OFFLabelColor                RED
+    ONColor                      DARKRED
+    ONLabel                      On
+    ONLabelColor                 WHITE
+    Orientation                  Horizontal
+    SwitchBevel                  3
+    Top                          24
+    Width                        130
+    OnChanged                    ''
+end
+Thermometer
+    Name                         Thermometer1
+    Alias                        Thermometer1
+    Caption                      Thermometer1
+    Color                        SILVER
+    ColorAfter                   0x000051
+    ColorBefore                  clRed
+    Direction                    Vertical
+    Font.Color                   BLACK
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    8
+    Font.Style                   []
+    Height                       230
+    Left                         216
+    Scale.Color                  BLACK
+    Scale.Decimals               0
+    Scale.Heightmax              14
+    Scale.Heightmin              8
+    Scale.Max                    150
+    Scale.Min                    50
+    Scale.Offset                 20
+    Scale.Position               After
+    Scale.ScaleType              Linear
+    Scale.SmallStep              4
+    Scale.Step                   20
+    Scale.Visible                Yes
+    Setpoint.Bitmap              (None)
+    Setpoint.Color               BLUE
+    Setpoint.Shape               Line
+    Setpoint.Value               33
+    Setpoint.Visible             No
+    ShowCaption                  No
+    Top                          112
+    Value.Bitmap                 (None)
+    Value.Color                  clAqua
+    Value.Shape                  Line
+    Value.Value                  100
+    Value.Visible                Yes
+    Width                        100
+    OnChanged                    ''
+end

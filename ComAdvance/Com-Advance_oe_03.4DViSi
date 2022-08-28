@@ -31,7 +31,7 @@ Form
     Name                         Form1
     Alias                        Form1
     Bgtype                       Color
-    Color                        'Office 2003 Classic'
+    Color                        BLACK
     Image                        (None)
     Source.Height                0
     Source.Left                  0
@@ -55,11 +55,11 @@ Label
     4DGLFont.MagWidth            1
     4DGLFont.MagHeight           1
     4DGLFont.Opaque              Yes
-    BGcolor                      'Office 2003 Classic'
+    BGcolor                      BLACK
     Caption                      LABEL1:
-    FGcolor                      BLACK
-    Left                         40
-    Top                          88
+    FGcolor                      WHITE
+    Left                         32
+    Top                          84
 end
 Label
     Name                         Label2
@@ -85,7 +85,7 @@ StaticText
     AutoSize                     Yes
     Caption                      STRING1
     Color                        BLACK
-    Font.Color                   BLACK
+    Font.Color                   WHITE
     Font.Effects                 []
     Font.Name                    Tahoma
     Font.Size                    11
@@ -94,7 +94,7 @@ StaticText
     Left                         116
     Top                          80
     Transparent                  Yes
-    Width                        61
+    Width                        90
     WordWrap                     Yes
 end
 StaticText
@@ -526,17 +526,20 @@ Label
     Left                         260
     Top                          164
 end
-4Dbutton
-    Name                         4Dbutton1
-    Alias                        4Dbutton1
-    Height                       48
-    Left                         536
-    Matrix                       -1
-    Momentary                    Yes
-    Size                         48x48
-    Style                        Blue
-    Top                          244
-    Type                         Button02
-    Width                        48
-    OnChanged                    ''
+Label
+    Name                         Label8
+    Alias                        Label8
+    4DGLFont.Font                FONT1
+    4DGLFont.Bold                No
+    4DGLFont.Italic              No
+    4DGLFont.Inverse             No
+    4DGLFont.Underline           No
+    4DGLFont.MagWidth            1
+    4DGLFont.MagHeight           1
+    4DGLFont.Opaque              Yes
+    BGcolor                      BLACK
+    Caption                      Com-Advance_oe_03
+    FGcolor                      0x09F5F0
+    Left                         88
+    Top                          24
 end

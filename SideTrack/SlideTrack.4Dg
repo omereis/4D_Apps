@@ -37,12 +37,13 @@
 #inherit "SlideTrackConst.inc"
 
 var x, y ;
+
 func moveislider()
     var posn ;
 
     //1.0 generated 4/02/2019 1:55:45 PM
     img_Show(hndl,islider1) ; // show initialy, if required
-    img_ClearAttributes(hndl, islider1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    //img_ClearAttributes(hndl, islider1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
     posn := gfx_XYlinToVal(x, y, 0, 33, 178, 0, 100) ;
     img_SetWord(hndl, islider1, IMAGE_INDEX, posn);
     img_Show(hndl, islider1);
@@ -51,12 +52,29 @@ func moveislider()
 //    gfx_CircleFilled(x, y, 3, WHITE);    // draw filled circle over approx position of slider
 endfunc
 
+func move_slider(var iSlider, var ix, var iy)
+    var posn ;
+
+    //1.0 generated 4/02/2019 1:55:45 PM
+    img_Show(hndl,iSlider) ; // show initialy, if required
+    //img_ClearAttributes(hndl, islider1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    posn := gfx_XYlinToVal(ix, iy, 0, 33, 178, 0, 100) ;
+    img_SetWord(hndl, iSlider, IMAGE_INDEX, posn);
+    img_Show(hndl, iSlider);
+    txt_MoveCursor(25, 10);
+    print([DEC3ZB] posn) ;
+    txt_MoveCursor(25, 20);
+    print("Kilroy was here, @move_slider");
+    ledDigitsDisplay(posn, iLeddigits1, 0, 0, 0, 0, 0);
+//    gfx_CircleFilled(x, y, 3, WHITE);    // draw filled circle over approx position of slider
+endfunc
+
 func moveitrackbar()
     var posn ;
 
     // trackbar1 1.0 generated 4/02/2019 1:49:18 PM
     img_Show(hndl,itrackbar1) ; // show initialy, if required
-    img_ClearAttributes(hndl, itrackbar1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    //img_ClearAttributes(hndl, itrackbar1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
     posn := gfx_XYlinToVal(x, y, 0, 40, 172, 0, 100) ;
     img_SetWord(hndl, itrackbar1, IMAGE_INDEX, posn);
     img_Show(hndl, itrackbar1);
@@ -66,10 +84,10 @@ func moveitrackbar()
 endfunc
 
 func main()
-    var state, n ;
+    var state, n, posn;
 //  Uncomment the following if uSD images used.
 
-    putstr("Mounting...\n");
+    putstr("Mounting...");
     if (!(file_Mount()))
         while(!(file_Mount()))
             putstr("Drive not mounted...");
@@ -80,8 +98,15 @@ func main()
     endif
     gfx_TransparentColour(0x0020);
     gfx_Transparency(ON);
+    putstr("Mounted\n");
 
+     hndl := 0;
+    txt_MoveCursor(4, 40);
+    print("hndl:", hndl, ", islider1: ", islider1, ", itrackbar1: ", itrackbar1);
     hndl := file_LoadImageControl("SLIDET~1.dat", "SLIDET~1.gci", 1);
+
+    txt_MoveCursor(5, 40);
+    print("hndl:", hndl);
 
 
     // Leddigits1 1.0 generated 24/07/2022 15:35:47
@@ -95,12 +120,22 @@ func main()
     img_Show(hndl,islider1) ; // show initialy, if required
     img_SetWord(hndl, islider1, IMAGE_FLAGS, (img_GetWord(hndl, islider1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE); // set to enable touch, only need to do this once
     img_Show(hndl,itrackbar1) ; // show initialy, if required
-    img_SetWord(hndl, itrackbar1, IMAGE_FLAGS, (img_GetWord(hndl, itrackbar1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    //img_SetWord(hndl, itrackbar1, IMAGE_FLAGS, (img_GetWord(hndl, itrackbar1, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+
+/**/
+    // Slider2 1.0 generated 02/08/2022 10:37:53
+    img_Show(hndl,iSlider2) ; // show initialy, if required
+    //img_ClearAttributes(hndl, iSlider2, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    //posn := gfx_XYlinToVal(x, y, 0, 28, 173, 0, 100) ;
+    img_SetWord(hndl, iSlider2, IMAGE_FLAGS, (img_GetWord(hndl, iSlider2, IMAGE_FLAGS) | I_STAYONTOP) & ~I_TOUCH_DISABLE); // set to enable touch, only need to do this once
+    img_SetWord(hndl, iSlider2, IMAGE_INDEX, 55);
+    img_Show(hndl, iSlider2);
+/**/
 
     touch_Set(TOUCH_ENABLE);                            // enable the touch screen
 
     repeat
-
+/**/
         state := touch_Get(TOUCH_STATUS);               // get touchscreen status
         n := img_Touched(hndl,-1) ;
 
@@ -110,6 +145,8 @@ func main()
             y := touch_Get(TOUCH_GETY);
         endif
 
+        txt_MoveCursor(15, 40);
+        putstr(n);
         //-----------------------------------------------------------------------------------------
         if(state == TOUCH_RELEASED)                      // if there's a release
         endif
@@ -118,9 +155,23 @@ func main()
         if(state == TOUCH_MOVING)                       // if it's moving
             x := touch_Get(TOUCH_GETX);
             y := touch_Get(TOUCH_GETY);
-            if (n == islider1) moveislider() ;
-            if (n == itrackbar1) moveitrackbar() ;
-        endif
 
+            txt_MoveCursor(10, 40);
+            print("n:", n, ", X:", x, ", Y:", y);
+
+            txt_MoveCursor(35, 40);
+            print("itrackbar1: ", itrackbar1);
+            if (n == iSlider2)
+                 txt_MoveCursor(30, 40);
+                 print ("Slider, x: ", x, ", y:", y);
+                move_slider(n, x, y);
+            endif
+            if (n == islider1)
+                 txt_MoveCursor(30, 40);
+                 print ("Slider, x: ", x, ", y:", y);
+                //moveislider();
+                move_slider(n, x, y);
+            endif
+        endif
     forever
 endfunc

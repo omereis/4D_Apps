@@ -11,7 +11,7 @@
 
 // var gradientRAM[29+xxx*2] := [-1,-1,-9999,0,0,xxx] ;  // uncomment and replace xxx with maximum of all inherent 'media' widgets
 
-#inherit "Com-Advance_oe_01Const.inc"
+#inherit "Com-Advance_oe_03Const.inc"
 
 #DATA
     // IGauge2 Data Start
@@ -366,30 +366,29 @@ func main()
         wend
     endif
 
-    // Form1 1.1 generated 08/08/2022 11:52:34
-
-    // Form1 1.1 generated 08/08/2022 11:54:51
-
-    // Form1 1.1 generated 08/08/2022 11:56:46
-    gfx_BGcolour(0xD699) ;
-    gfx_Cls() ;
-
     Resnum++;
 
 
 //    gfx_TransparentColour(0x0020);    // uncomment if transparency required, please understand why and when you need to use this
 //    gfx_Transparency(ON);             // uncomment if transparency required, as generally there is a performance hit when using it
 
-//  hFontn := file_LoadImageControl("COM-AD~1.dan", "COM-AD~1.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
-//  hstrings := file_Open("COM-AD~1.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+//  hFontn := file_LoadImageControl("COM-AD~3.dan", "COM-AD~3.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+//  hstrings := file_Open("COM-AD~3.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
 
-    Handle := file_LoadImageControl("COM-AD~1.dat", "COM-AD~1.gci", 1);
+    Handle := file_LoadImageControl("COM-AD~3.dat", "COM-AD~3.gci", 1);
 
+    // Label8 1.0 generated 28/08/2022 11:54:30
+    txt_FGcolour(0xF7A1) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(88, 24) ;
+    putstr("Com-Advance_oe_03") ;
 
-    // Label1 1.0 generated 08/08/2022 11:56:16
-    txt_FGcolour(BLACK) ;
-    txt_BGcolour(0xD699) ;
-    gfx_MoveTo(40, 88) ;
+    // Form1 1.1 generated 28/02/2022 14:10:39
+
+    // Label1 1.0 generated 28/02/2022 14:10:39
+    txt_FGcolour(WHITE) ;
+    txt_BGcolour(BLACK) ;
+    gfx_MoveTo(32, 84) ;
     putstr("LABEL1:") ;
 
     // Label2 1.0 generated 28/02/2022 14:10:39
@@ -445,26 +444,14 @@ func main()
     Handle := spiflash_LoadGCFImageControl(SPIx, EnablePin);    // SPIx is SPI0 or SPI1, as appropriate, EnablePin is USD_ENABLE or PA?
 */
 
-
-    // 4Dbutton1 1.0 generated 02/08/2022 8:44:22
-    img_ClearAttributes(hndl, i4Dbutton1, I_TOUCH_DISABLE); // set to enable touch, only need to do this once
-    img_Show(hndl, i4Dbutton1);  // show button, only do this once
-    img_SetWord(hndl, i4Dbutton1, IMAGE_INDEX, 0); // where state is 0 for up and 1 for down
-    img_Show(hndl,i4Dbutton1) ;
-
-
     gfx_Set(SCREEN_MODE,LANDSCAPE) ;
 
     img_Show(Handle,ALL);
 
-    // Statictext1 1.0 generated 08/08/2022 12:25:13
-    img_Show(Handle,iStatictext1) ;
-
         // Rectangle1 1.0 generated 15/03/2022 8:36:39
     gfx_OutlineColour(WHITE) ;
     gfx_LinePattern(LPFINE) ;
-    //gfx_RectangleFilled(264, 108, 303, 147, YELLOW) ;
-    gfx_RectangleFilled(264, 108, 303, 147, GREEN) ;
+    gfx_RectangleFilled(264, 108, 303, 147, YELLOW) ;
     gfx_OutlineColour(BLACK) ;
     gfx_LinePattern(LPSOLID) ;
 
